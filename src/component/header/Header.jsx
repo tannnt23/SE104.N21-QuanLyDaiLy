@@ -1,8 +1,8 @@
 const Header = () => {
   return (
-    <header className="flex w-screen p-5 bg-[#27374D] text-white">
+    <header className="flex p-5 bg-[#D6E8DB]">
       <div className="flex-1 flex">
-        <h1 className="text-4xl font-bold cursor-pointer">Quản lý đại lý</h1>
+        <h1 className="text-4xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
       </div>
       <div className="flex-1 flex items-center justify-center">
         <ul className="flex space-x-5 justify-center text-xl font-semibold">
@@ -13,10 +13,7 @@ const Header = () => {
             <button>About</button>
           </li>
           <li>
-            <button>Item 1</button>
-          </li>
-          <li>
-            <button>Item 2</button>
+            <button>Login</button>
           </li>
         </ul>
       </div>

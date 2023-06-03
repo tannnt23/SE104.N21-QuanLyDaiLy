@@ -5,7 +5,7 @@ const Layout = ({ children }) => {
     <div className="h-screen min-h-screen relative">
       <Header />
       {/* Content */}
-      <div className="p-5 bg-[#9DB2BF]">
+      <div className="p-5 min-h-[calc(100vh-80px)] bg-[#FFF8DE]">
         <div>{children}</div>
       </div>
       {/* ---Content--- */}
