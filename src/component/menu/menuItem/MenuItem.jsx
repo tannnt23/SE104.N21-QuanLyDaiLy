@@ -1,7 +1,8 @@
-const MenuItem = ({ label }) => {
+const MenuItem = ({ label, icon }) => {
   return (
-    <div className="p-10 bg-[#F2B6A0] hover:bg-[#FFDEB4] text-[#4F200D]  rounded-md flex justify-center cursor-pointer transition ease-in-out duration-150">
-      <p className="text-2xl font-semibold">{label}</p>
+    <div className="p-10 rounded-md flex flex-col space-y-2 justify-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] hover:scale-105 hover:shadow-[0_3px_10px_rgb(0,0,0,0.4)] cursor-pointer transition ease-in-out duration-150">
+      <div className="flex justify-center">{icon}</div>
+      <p className="font-semibold flex justify-center">{label}</p>
     </div>
   );
 };
