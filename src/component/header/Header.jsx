@@ -1,6 +1,6 @@
 const Header = () => {
   return (
-    <header className="flex p-5 bg-[#6096B4] text-[#EEE9DA]">
+    <header className="flex p-5 bg-blue-700 text-white">
       <div className="flex-1 flex">
         <h1 className="text-4xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
       </div>

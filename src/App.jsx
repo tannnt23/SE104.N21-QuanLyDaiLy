@@ -2,6 +2,7 @@
 import Layout from "./component/layout/Layout";
 // import pages
 import Home from "./pages/home/Home";
+import LapPhieuXuatHang from "./pages/lapphieuxuathang/LapPhieuXuatHang";
 // import packages
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -12,6 +13,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/lap-phieu-xuat-hang" element={<LapPhieuXuatHang />} />
           </Routes>
         </Layout>
       </BrowserRouter>
