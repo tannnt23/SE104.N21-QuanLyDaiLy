@@ -38,58 +38,66 @@ const PhieuXuatHang = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
-            <tr key={row.id}>
-              <td>
-                <input
-                  type="text"
-                  name="field1"
-                  value={row.field1}
-                  onChange={(e) => handleChange(e, index)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="field2"
-                  value={row.field2}
-                  onChange={(e) => handleChange(e, index)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="field3"
-                  value={row.field3}
-                  onChange={(e) => handleChange(e, index)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="field4"
-                  value={row.field4}
-                  onChange={(e) => handleChange(e, index)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="field5"
-                  value={row.field5}
-                  onChange={(e) => handleChange(e, index)}
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </td>
-              <td>
-                <button onClick={() => removeRow(index)} className="px-2 py-1 bg-red-500 text-white rounded-md">Xoá</button>
-              </td>
-            </tr>
-          ))}
+          {
+            data.map((row, index) =>
+            (  
+              // ----------------------------------------------------------------  
+              //just a row in the table
+                <tr key={row.id}>
+                  <td>
+                    <input
+                      type="text"
+                      name="field1"
+                      value={row.field1}
+                      onChange={(e) => handleChange(e, index)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      name="field2"
+                      value={row.field2}
+                      onChange={(e) => handleChange(e, index)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      name="field3"
+                      value={row.field3}
+                      onChange={(e) => handleChange(e, index)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      name="field4"
+                      value={row.field4}
+                      onChange={(e) => handleChange(e, index)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      name="field5"
+                      value={row.field5}
+                      onChange={(e) => handleChange(e, index)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => removeRow(index)} className="px-2 py-1 bg-red-500 text-white rounded-md">Xoá</button>
+                  </td>
+                </tr>
+                // --just a row in the table--
+                // ----------------------------------------------------------------
+              )
+            )
+          }
         </tbody>
       </table>
 

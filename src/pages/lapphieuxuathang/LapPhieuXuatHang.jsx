@@ -1,5 +1,5 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import PhieuXuatHang from "../../component/form/PhieuXuatHang";
+import InputTable from "../../component/form/InputTable";
 
 function LapPhieuXuatHang() {
     return (
@@ -29,17 +29,18 @@ function LapPhieuXuatHang() {
                     <br />
                     <br />
 
-                    <div className="w-2/3">
-                        <PhieuXuatHang />
+                    <div className="w-2/3 ">
+                        <InputTable />
                     </div>
 
 
-
-                    <div className="flex justify-end w-2/3">
+                    <div className="flex justify-end w-4/5 ">
                         <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-green-700 ease-in-out transition duration-300 cursor-pointer" />
                     </div>
+
                 </form>
             </div>
+
         </div>
     )
 }
