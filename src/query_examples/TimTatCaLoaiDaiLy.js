@@ -11,7 +11,7 @@ const { LOAIDAILY } = models;
 
 /*--------------------------------------------*/
 // Sử dụng async await
-const timTatCaDaiLy = async () => {
+const timTatCaLoaiDaiLy = async () => {
     try {
         const cacDaiLy = await LOAIDAILY.findAll()
         console.log(cacDaiLy);
@@ -21,7 +21,7 @@ const timTatCaDaiLy = async () => {
     }
 }
 
-timTatCaDaiLy().then(() => {
+timTatCaLoaiDaiLy().then(() => {
     // Thực hiện hàm sau khi `timTatCaDaiLy()` hoàn thành
 }).catch((error) => {
     console.error(error);
