@@ -4,7 +4,7 @@ const { QUAN } = models
 
 // Sử dụng model để query
 const newQuan = {
-    TenQuan: 'Quan 9'
+    TenQuan: 'Quan 1'
 }
 QUAN.create(newQuan).then((quan) => {
     console.log(quan);

@@ -11,8 +11,8 @@ LOAIDAILY.findAll({
         },
     },
 })
-    .then((loaidailies) => {
-        console.log(loaidailies);
+    .then((loaidaily) => {
+        console.log(loaidaily);
     })
     .catch((error) => {
         console.error(error);
