@@ -9,7 +9,7 @@ function LapPhieuThuTien() {
     const { loading, error, data } = useQuery(queryEveryDaily);
 
     const [daiLy, setDaiLy] = useState([])
-    const [thuTien, setThuTien] = useState(0)
+    const [thuTien, setThuTien] = useState('')
     const [showNo, setShowNo] = useState(false)
     const [tienNo, setTienNo] = useState('0')
     const [daiLyDuocChon, setDaiLyDuocChon] = useState('option 0')
