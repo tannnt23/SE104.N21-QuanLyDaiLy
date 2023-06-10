@@ -1,21 +1,26 @@
+import { Link } from "react-router-dom";
+
 const Header = () => {
   return (
     <header className="flex p-5 bg-blue-700 text-white">
       <div className="flex-1 flex">
-        <h1 className="text-4xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
+        <Link to={'/'}>
+          <h1 className="text-4xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
+        </Link>
+
       </div>
       <div className="flex-1 flex items-center justify-center">
-        <ul className="flex space-x-5 justify-center text-xl font-semibold">
+        {/* <ul className="flex space-x-5 justify-center text-xl font-semibold">
           <li>
-            <button>Home</button>
+            <button>item</button>
           </li>
           <li>
-            <button>About</button>
+            <button>item</button>
           </li>
           <li>
-            <button>Login</button>
+            <button>item</button>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </header>
   );

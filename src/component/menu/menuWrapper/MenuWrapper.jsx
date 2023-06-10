@@ -38,6 +38,7 @@ function MenuWrapper() {
       id: 5,
       label: "Tra cứu đại lý",
       icon: <ManageSearchIcon fontSize="large" />,
+      link: 'tra-cuu-dai-ly',
     },
     {
       id: 6,
