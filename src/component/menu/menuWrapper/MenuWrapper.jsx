@@ -45,6 +45,7 @@ function MenuWrapper() {
       id: 6,
       label: "Báo cáo công nợ",
       icon: <SummarizeIcon fontSize="large" />,
+      link : 'bao-cao-cong-no',
     },
     {
       id: 7,
