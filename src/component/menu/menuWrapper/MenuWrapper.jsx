@@ -49,8 +49,9 @@ function MenuWrapper() {
     },
     {
       id: 7,
-      label: "Báo cáo doanh số",
+      label: "Báo cáo doanh thu",
       icon: <BarChartIcon fontSize="large" />,
+      link : 'bao-cao-doanh-thu',
     },
     {
       id: 8,

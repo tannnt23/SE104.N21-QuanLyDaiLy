@@ -12,7 +12,7 @@ function BaoCaoCongNo() {
     const { loading, error, data } = useQuery(queryEveryDaily);
     //const { loading, error, data } = useQuery(queryBaocaocongnoById, { variables: { 'MaBaoCaoCongNo': 0 } });
     const [daiLy, setDaiLy] = useState([])
-    const [name, setName] = useState('');
+    const [name, setName] = useState('option 0');
     const [date, setDate] = useState('');
     const [tableData, setTableData] = useState(null);
 
@@ -58,7 +58,7 @@ function BaoCaoCongNo() {
     const createCongNoTable = () => (
 
         <div className="mt-4 mx-auto">
-            <h2 className="text-center text-xl mb-2">Báo cáo công nợ tháng {date.split('-')[1]}</h2>
+            <h2 className="text-center text-xl mb-2">Báo cáo công nợ tháng {date.split('-')[1]} năm {date.split('-')[0]}</h2>
             <table className="w-full border border-gray-300">
                 <thead>
                     <tr>
