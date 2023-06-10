@@ -4,6 +4,7 @@ import Layout from "./component/layout/Layout";
 import Home from "./pages/home/Home";
 import LapPhieuXuatHang from "./pages/lapphieuxuathang/LapPhieuXuatHang";
 import DangKyDaiLy from "./pages/dangkydaily/DangKyDaiLy";
+import TraCuuDaiLy from "./pages/tracuudaily/TraCuuDaiLy";
 // import packages
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/lap-phieu-xuat-hang" element={<LapPhieuXuatHang />} />
             <Route path="/dang-ky-dai-ly" element={<DangKyDaiLy />} />
+            <Route path="/tra-cuu-dai-ly" element={<TraCuuDaiLy />} />
           </Routes>
         </Layout>
       </BrowserRouter>
