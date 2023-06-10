@@ -1,13 +1,16 @@
 import BackButton from "../../component/button/backbutton/BackButton";
 import InputTable from "../../component/form/InputTable";
+import InputTable2 from "../../component/form/InputTable2";
 
 function LapPhieuXuatHang() {
     return (
         <div>
             <BackButton />
+            {/* Heading */}
             <div className="flex flex justify-center">
                 <h2 className="text-4xl font-bold">Phiếu xuất hàng</h2>
             </div>
+            {/* Form */}
             <div>
                 <form className="p-4">
                     <div className="flex flex-col w-1/3">
@@ -19,21 +22,16 @@ function LapPhieuXuatHang() {
                                 <option value="option3">Option 3</option>
                             </select>
                         </div>
-
                         <div className="">
                             <label htmlFor="date-input" className="block mt-4 mb-2">Ngày lập phiếu</label>
                             <input type="date" id="date-input" name="date-input" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
                         </div>
                     </div>
-
                     <br />
                     <br />
-
                     <div className="w-2/3 ">
-                        <InputTable />
+                        <InputTable2 />
                     </div>
-
-
                     <div className="flex justify-end w-4/5 ">
                         <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-green-700 ease-in-out transition duration-300 cursor-pointer" />
                     </div>
