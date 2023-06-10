@@ -2,6 +2,7 @@
 import Layout from "./component/layout/Layout";
 // import pages
 import Home from "./pages/home/Home";
+import LapPhieuThuTien from "./pages/lapphieuthutien/LapPhieuThuTien";
 import LapPhieuXuatHang from "./pages/lapphieuxuathang/LapPhieuXuatHang";
 import DangKyDaiLy from "./pages/dangkydaily/DangKyDaiLy";
 import TraCuuDaiLy from "./pages/tracuudaily/TraCuuDaiLy";
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/lap-phieu-xuat-hang" element={<LapPhieuXuatHang />} />
+            <Route path="/lap-phieu-thu-tien" element={<LapPhieuThuTien />} />
             <Route path="/dang-ky-dai-ly" element={<DangKyDaiLy />} />
             <Route path="/tra-cuu-dai-ly" element={<TraCuuDaiLy />} />
           </Routes>

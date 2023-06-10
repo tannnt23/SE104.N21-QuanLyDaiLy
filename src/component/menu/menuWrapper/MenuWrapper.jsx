@@ -33,6 +33,7 @@ function MenuWrapper() {
       id: 4,
       label: "Lập phiếu thu tiền",
       icon: <ReceiptIcon fontSize="large" />,
+      link: 'lap-phieu-thu-tien'
     },
     {
       id: 5,
