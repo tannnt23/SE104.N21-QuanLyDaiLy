@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="flex p-5 bg-blue-700 text-white">
+    <header className="flex p-3 bg-blue-700 text-white">
       <div className="flex-1 flex">
         <Link to={'/'}>
-          <h1 className="text-4xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
+          <h1 className="text-2xl font-bold ml-10 cursor-pointer">Quản lý đại lý</h1>
         </Link>
       </div>
       <div className="flex-1 flex items-center justify-center">

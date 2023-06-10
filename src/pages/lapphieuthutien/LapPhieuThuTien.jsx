@@ -49,10 +49,10 @@ function LapPhieuThuTien() {
 
     return (
         <div>
-            <BackButton />
             {/* Heading */}
-            <div className="flex flex justify-center">
-                <h2 className="text-4xl font-bold">Phiếu Thu Tiền</h2>
+            <div className="flex justify-center items-center">
+                <BackButton className="mr-4" />
+                <h2 className="mb-4 text-4xl font-bold text-center w-full">Phiếu Thu Tiền</h2>
             </div>
             {/* Form */}
             <div>

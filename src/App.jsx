@@ -8,6 +8,12 @@ import LapPhieuThuTien from "./pages/lapphieuthutien/LapPhieuThuTien";
 import LapPhieuXuatHang from "./pages/lapphieuxuathang/LapPhieuXuatHang";
 import DangKyDaiLy from "./pages/dangkydaily/DangKyDaiLy";
 import TraCuuDaiLy from "./pages/tracuudaily/TraCuuDaiLy";
+import ThayDoiQuyDinh from "./pages/thaydoiquydinh/ThayDoiQuyDinh";
+import ThayDoiLoaiDaiLy from "./pages/thaydoiquydinh/ThayDoiLoaiDaiLy";
+import ThayDoiDonVi from "./pages/thaydoiquydinh/ThayDoiDonVi";
+import ThayDoiThamSo from "./pages/thaydoiquydinh/ThayDoiThamSo";
+import NotFoundPage from "./pages/404_not_found/NotFound";
+
 // import packages
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -24,6 +30,11 @@ function App() {
             <Route path="/bao-cao-doanh-thu" element={<BaoCaoDoanhThu />} />
             <Route path="/dang-ky-dai-ly" element={<DangKyDaiLy />} />
             <Route path="/tra-cuu-dai-ly" element={<TraCuuDaiLy />} />
+            <Route path="/thay-doi-quy-dinh" element={<ThayDoiQuyDinh />} />
+            <Route path="/thay-doi-quy-dinh/loai-dai-ly" element={<ThayDoiLoaiDaiLy />} />
+            <Route path="/thay-doi-quy-dinh/don-vi-tinh" element={<ThayDoiDonVi />} />
+            <Route path="/thay-doi-quy-dinh/tham-so" element={<ThayDoiThamSo />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Layout>
       </BrowserRouter>
