@@ -60,7 +60,6 @@ const AddDailyForm = () => {
   if (errorLoaiDaiLy) {
     return <div>Error fetching dailyData</div>;
   }
-  // const [addDaily] = useMutation(addDailyMutation);
 
   const handleLoaiDaiLySelectionChange = (event) => {
     setSelectedLoaiDaiLy(event.target.value);
@@ -128,7 +127,7 @@ const AddDailyForm = () => {
 
       <div>
         <label htmlFor="MaQuan" className="block font-medium">
-          Mã Quận
+          Mã quận
         </label>
         <select
           id="MaQuan"

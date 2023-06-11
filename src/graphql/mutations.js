@@ -14,7 +14,7 @@ const updateThamsoMutation = gql`
 }
 `
 const addDailyMutation = gql`
-  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
+  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Float, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
     addDaily(TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaDaiLy
       TenDaiLy

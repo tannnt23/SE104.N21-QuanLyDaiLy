@@ -10,7 +10,8 @@ const Table = ({ daily }) => {
 
 
   // Function to handle form submission
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     // Extract the values from the form
     const TongTien = totalThanhTien;
     const MaDaiLy = daily;
