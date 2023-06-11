@@ -1,8 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
+import { addPhieuxuathangMutation } from '../../graphql/mutations';
 
-const Table = () => {
+const Table = ({ daily, date }) => {
+
+  // Define the mutation
+  const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
+
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    // Extract the values from the form
+    const TongTien = totalThanhTien;
+    const MaDaiLy = daily;
+    console.log(MaDaiLy)
+    // console.log(typeof TongTien)
+    // console.log(TongTien)
+    try {
+      // Perform the mutation
+      const { data } = await addPhieuxuathang({
+        variables: { TongTien, MaDaiLy },
+      });
+      console.log(data.MaPhieuXuat); 
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const [rows, setRows] = useState([]);
   const [field1Values, setField1Values] = useState(['1']);
   const [currentMatHangMap, setCurrentMatHangMap] = useState({});
@@ -10,6 +36,7 @@ const Table = () => {
   const [field3Values, setField3Values] = useState([]);
   const [thanhTienValues, setThanhTienValues] = useState([]);
   const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
+  const [amountPaid, setAmountPaid] = useState(0); // State variable for the amount paid by the buyer
 
   const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang);
   let allMatHang = [];
@@ -26,6 +53,9 @@ const Table = () => {
     const sum = thanhTienValues.reduce((acc, value) => acc + parseFloat(value || 0), 0);
     setTotalThanhTien(sum);
   }, [thanhTienValues]);
+
+  // Calculate the amount owed whenever the "totalThanhTien" or "amountPaid" changes
+  const amountOwed = totalThanhTien - amountPaid;
 
   const addRow = () => {
     setRows([...rows, { field1: '', field2: '', field3: '', field4: '', field5: '' }]);
@@ -141,7 +171,7 @@ const Table = () => {
                   onChange={(e) => updateFieldValue(index, 'field1', e.target.value)}
                   className="w-full"
                 >
-                  <option value="">Select</option>
+                  <option value="">Chọn mặt hàng...</option>
                   {allMatHang.map((matHang) => (
                     <option key={matHang.MaMatHang} value={matHang.MaMatHang}>
                       {matHang.TenMatHang}
@@ -149,9 +179,7 @@ const Table = () => {
                   ))}
                 </select>
               </td>
-              <td className="border">
-                {currentMatHangMap[row.field1]}
-              </td>
+              <td className="border">{currentMatHangMap[row.field1]}</td>
               <td className="border">
                 <input
                   type="number"
@@ -160,27 +188,47 @@ const Table = () => {
                   className="w-full"
                 />
               </td>
+              <td className="border">{donGiaNhapMap[row.field1]}</td>
+              <td className="border">{thanhTienValues[index]}</td>
               <td className="border">
-                {donGiaNhapMap[row.field1]}
-              </td>
-              <td className="border">
-                {thanhTienValues[index]}
-              </td>
-              <td className="border">
-                <button className='p-2 bg-red-500 font-bold  text-white' onClick={() => removeRow(index)}>Xoá</button>
+                <button className='p-2 block bg-red-400 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
               </td>
             </tr>
           ))}
         </tbody>
         <tfoot>
-          <tr className='font-bold bg-yellow-100 border border-2 border-gray-300'>
-            <td colSpan="4" className=''>Tổng tiền:</td>
-            <td>{totalThanhTien}</td>
+          <tr>
+            <td colSpan="4" className="text-right">
+              Tổng tiền:
+            </td>
+            <td className="border">{totalThanhTien}</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colSpan="4" className="text-right">
+              Số tiền khách trả:
+            </td>
+            <td className="border">
+              <input
+                type="number"
+                value={amountPaid}
+                onChange={(e) => setAmountPaid(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colSpan="4" className="text-right">
+              Số tiền còn nợ:
+            </td>
+            <td className="border">{amountOwed}</td>
             <td></td>
           </tr>
         </tfoot>
       </table>
-      <button className='p-2 bg-green-500 font-bold  text-white' onClick={addRow}>Thêm sản phẩm</button>
+      <button onClick={addRow} className='block bg-green-400 text-white font-bold p-2 '>Add Row</button>
+      <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2'>Submit</button>
     </div>
   );
 };
