@@ -319,37 +319,9 @@ const queryCt_bccnById = gql`
   }
 `
 
+
+
 export {
-<<<<<<< HEAD
-  queryMatHangByIdArr,
-  queryEveryDaily,
-  queryDailyById,
-  queryEveryQuan,
-  queryQuanById,
-  queryEveryLoaidaily,
-  queryLoaidailyById,
-  queryEveryDvt,
-  queryDvtById,
-  queryEveryPhieunhaphang,
-  queryPhieunhaphangById,
-  queryEveryMathang,
-  queryMathangById,
-  queryEveryPhieuxuathang,
-  queryPhieuxuathangById,
-  queryEveryCt_phieuxuathang,
-  queryCt_phieuxuathangById,
-  queryEveryBaocaodoanhso,
-  queryBaocaodoanhsoById,
-  queryEveryCt_bcds,
-  queryCt_bcdsById,
-  queryEveryPhieuthutien,
-  queryPhieuthutienById,
-  queryEveryBaocaocongno,
-  queryBaocaocongnoById,
-  queryEveryCt_bccn,
-  queryCt_bccnById
-}
-=======
   queryEveryDaily, queryDailyById, queryEveryQuan, queryQuanById, queryEveryLoaidaily,
   queryLoaidailyById, queryEveryDvt, queryDvtById, queryEveryPhieunhaphang,
   queryPhieunhaphangById, queryEveryMathang,
@@ -357,6 +329,5 @@ export {
   queryEveryCt_phieuxuathang, queryCt_phieuxuathangById,
   queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds,
   queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno,
-  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo
+  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo, queryMatHangByIdArr
 };
->>>>>>> aaf2509a388d32c5da317f36a47cf668671be88d
