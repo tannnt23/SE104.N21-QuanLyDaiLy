@@ -49,17 +49,10 @@ function LapPhieuThuTien() {
 
     return (
         <div>
-<<<<<<< HEAD
-            {/* <BackButton />
-           
-            <div className="flex flex justify-center">
-                <h2 className="text-4xl font-bold">Phiếu xuất hàng</h2>
-=======
             {/* Heading */}
             <div className="flex justify-center items-center">
                 <BackButton className="mr-4" />
                 <h2 className="mb-4 text-4xl font-bold text-center w-full">Phiếu Thu Tiền</h2>
->>>>>>> aaf2509a388d32c5da317f36a47cf668671be88d
             </div>
         
             <div>
@@ -100,7 +93,7 @@ function LapPhieuThuTien() {
                     </div>
 
                 </form>
-            </div> */}
+            </div> 
 
         </div>
     )

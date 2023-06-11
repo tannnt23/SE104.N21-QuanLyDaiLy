@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
 
 const Table = () => {
   const [rows, setRows] = useState([]);
   const [field1Values, setField1Values] = useState(['1']);
-  const [field2Values, setField2Values] = useState([]); //don vi tinh
+  const [currentMatHangMap, setCurrentMatHangMap] = useState({});
 
-
-  const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang)
-  let allMatHang = []
+  const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang);
+  let allMatHang = [];
   if (dataMatHang && dataMatHang.everyMathang) {
-    allMatHang = dataMatHang.everyMathang
+    allMatHang = dataMatHang.everyMathang;
   }
-  // console.log(typeof field1Values[0])
-
-  const { loading: loadingMatHangByID, error: errorMatHangByID, data: dataMatHangByID } = useQuery(queryMatHangByIdArr, {
-    variables: { maMatHangArr: field1Values }
-  })
-  let allCurrentMatHang = []
-  if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
-    allCurrentMatHang = dataMatHangByID.everyMatHangByArrOfMaMatHang
-  }
-  // console.log(typeof allCurrentMatHang[0])
-  
 
   useEffect(() => {
     addRow();
@@ -53,10 +41,37 @@ const Table = () => {
       const updatedField1Values = [...field1Values];
       updatedField1Values[index] = value;
       setField1Values(updatedField1Values);
+    }
 
-
+    if (field === 'field1') {
+      const updatedCurrentMatHangMap = { ...currentMatHangMap };
+      const matHang = allMatHang.find(item => item.MaMatHang === value);
+      if (matHang && matHang.relatedDvt) {
+        updatedCurrentMatHangMap[value] = matHang.relatedDvt.TenDVT;
+      } else {
+        updatedCurrentMatHangMap[value] = 'Loading...';
+      }
+      setCurrentMatHangMap(updatedCurrentMatHangMap);
     }
   };
+
+  const { loading: loadingMatHangByID, error: errorMatHangByID, data: dataMatHangByID } = useQuery(queryMatHangByIdArr, {
+    variables: { maMatHangArr: field1Values }
+  });
+
+  useEffect(() => {
+    if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
+      const updatedCurrentMatHangMap = { ...currentMatHangMap };
+      dataMatHangByID.everyMatHangByArrOfMaMatHang.forEach((matHang) => {
+        if (matHang && matHang.relatedDvt) {
+          updatedCurrentMatHangMap[matHang.MaMatHang] = matHang.relatedDvt.TenDVT;
+        } else {
+          updatedCurrentMatHangMap[matHang.MaMatHang] = 'Loading...';
+        }
+      });
+      setCurrentMatHangMap(updatedCurrentMatHangMap);
+    }
+  }, [dataMatHangByID]);
 
   return (
     <div>
@@ -81,20 +96,17 @@ const Table = () => {
                   className="w-full"
                 >
                   <option value="">Select</option>
-                  {
-                    allMatHang.map((matHang, index) =>
-                    (
-                      <option key={matHang.MaMatHang} value={matHang.MaMatHang}>{matHang.TenMatHang}</option>
-                    )
-                    )
-                  }
+                  {allMatHang.map((matHang) => (
+                    <option key={matHang.MaMatHang} value={matHang.MaMatHang}>
+                      {matHang.TenMatHang}
+                    </option>
+                  ))}
                 </select>
               </td>
               <td className="border">
                 <input
                   type="text"
-                  value={(allCurrentMatHang[index] !== undefined) ? allCurrentMatHang[index].relatedDvt.TenDVT : 'Loading...'}
-                  // onChange={(e) => updateFieldValue(index, 'field2', e.target.value)}
+                  value={currentMatHangMap[row.field1] || 'Loading...'}
                   className="w-full p-2"
                   readOnly
                 />
@@ -124,7 +136,10 @@ const Table = () => {
                 />
               </td>
               <td className="border">
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => removeRow(index)}>
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => removeRow(index)}
+                >
                   Remove
                 </button>
               </td>
@@ -132,7 +147,10 @@ const Table = () => {
           ))}
         </tbody>
       </table>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={addRow}>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        onClick={addRow}
+      >
         Add Row
       </button>
 
@@ -145,8 +163,8 @@ const Table = () => {
         </ul>
         <h2>Field 2 Values:</h2>
         <ul>
-          {field2Values.map((value, index) => (
-            <li key={index}>{value}</li>
+          {Object.entries(currentMatHangMap).map(([key, value]) => (
+            <li key={key}>{value}</li>
           ))}
         </ul>
       </div>
