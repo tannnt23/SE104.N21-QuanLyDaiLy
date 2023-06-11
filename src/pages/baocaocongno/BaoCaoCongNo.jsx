@@ -1,35 +1,41 @@
 import BackButton from "../../component/button/backbutton/BackButton";
+import Error from "../../component/pop_up_error/Error";
 
-import { useQuery } from '@apollo/client';
-import {
-    queryEveryBaocaocongno,
-    queryBaocaocongnoById,
-    queryEveryDaily
-} from '../../graphql/queries';
+import { useQuery, useLazyQuery } from '@apollo/client';
+import {queryCt_bccnByTenDLAndThang,queryEveryDaily} from '../../graphql/queries';
 import { useState, useEffect } from 'react';
 
 function BaoCaoCongNo() {
-    const { loading, error, data } = useQuery(queryEveryDaily);
-    //const { loading, error, data } = useQuery(queryBaocaocongnoById, { variables: { 'MaBaoCaoCongNo': 0 } });
+
     const [daiLy, setDaiLy] = useState([])
     const [name, setName] = useState('option 0');
     const [date, setDate] = useState('');
     const [tableData, setTableData] = useState(null);
+    const [showError, setShowError] = useState(null);
+
+    const { loading, error, data } = useQuery(queryEveryDaily);
+    const [getDLViaMonth, dataQuery] = useLazyQuery(queryCt_bccnByTenDLAndThang);
 
     useEffect(() => {
-        if (data) {
-            console.log(data)
-            setDaiLy(data.everyDaily)
+        if (data) setDaiLy(data.everyDaily)
+        
+        if (dataQuery.data) {
+            let data_ = dataQuery.data.ct_bccnByTenDLAndThang[0]
+            //console.log(data_)
+            setTableData({
+                name: data_?.relatedDaily.TenDaiLy,
+                noDau: data_?.NoDau,
+                noCuoi: data_?.NoCuoi,
+                phatSinh: data_?.PhatSinh
+            })
         }
-    }, [data]);
+        else (
+            setShowError(dataQuery.error)
+        )
+    }, [data, dataQuery, showError]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
+    if (loading) return <div>Loading...</div>;
+    if (error) setShowError(error);
 
     const handleNameChange = (event) => {
         setName(event.target.value);
@@ -41,18 +47,16 @@ function BaoCaoCongNo() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        
+
         let option = parseInt(name.split(' ')[1])
-        let choosen = daiLy[option]
+        let tenDaiLy = daiLy[option].TenDaiLy
 
-        const newData = {
-            name: choosen.TenDaiLy,
-            noDau: 1000, // Giá trị tùy ý, có thể thay đổi
-            phatSinh: 500, // Giá trị tùy ý, có thể thay đổi
-            noCuoi: 1500, // Giá trị tùy ý, có thể thay đổi
-        }
-
-        setTableData(newData);
+        getDLViaMonth({
+            variables: {
+                'tenDaiLy': tenDaiLy,
+                'thang': [date.split('-')[0], date.split('-')[1]].join('-')
+            }
+        })
     };
 
     const createCongNoTable = () => (
@@ -81,8 +85,13 @@ function BaoCaoCongNo() {
 
     )
 
+    const renderErrorComponent = (error) => {
+        return <Error error={error} />;
+    };
+
     return (
         <div>
+            {renderErrorComponent(showError)}
             {/* Heading */}
             <div className="flex justify-center items-center">
                 <BackButton className="mr-4" />
