@@ -1,5 +1,5 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import Error from "../../component/pop_up_error/Error";
+import Error from "../../component/pop_up/Error";
 
 import { useQuery, useLazyQuery } from '@apollo/client';
 import {queryCt_bccnByTenDLAndThang,queryEveryDaily} from '../../graphql/queries';

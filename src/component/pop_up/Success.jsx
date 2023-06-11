@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 
-const Error = (error) => {
+const Success = (prop) => {
   const [showError, setShowError] = useState(false);
 
   useEffect(()=>{
-    setShowError(Boolean(error.error));
-  },[error])
+    setShowError(prop.show)
+  },[prop])
 
   const handleCloseError = () => {
     setShowError(false);
@@ -15,10 +15,10 @@ const Error = (error) => {
     <>
       {showError && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-red-500 text-white font-bold py-2 px-4 rounded shadow-lg">
-            <p>{error.error.message}</p>
+          <div className="bg-green-500 text-white font-bold py-2 px-4 rounded shadow-lg">
+            <p>Success</p>
             <button
-              className="mt-4 bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded"
+              className="mt-4 bg-green-700 hover:bg-green-900 text-white font-bold py-2 px-4 rounded"
               onClick={handleCloseError}
             >
               Close
@@ -30,4 +30,4 @@ const Error = (error) => {
   );
 };
 
-export default Error;
+export default Success;

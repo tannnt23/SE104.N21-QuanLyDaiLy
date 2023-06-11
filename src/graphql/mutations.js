@@ -14,7 +14,7 @@ const updateThamsoMutation = gql`
 }
 `
 const addDailyMutation = gql`
-  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
+  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Float, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
     addDaily(TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaDaiLy
       TenDaiLy
@@ -30,7 +30,7 @@ const addDailyMutation = gql`
 `
 
 const updateDailyMutation = gql`
-  mutation($MaDaiLy: ID!, $TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String!, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
+  mutation($MaDaiLy: ID!, $TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String!, $TienNo: Float, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
     updateDaily(MaDaiLy: $MaDaiLy, TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaDaiLy
       TenDaiLy
@@ -341,14 +341,14 @@ const deleteCt_bcdsMutation = gql`
 `
 
 const addPhieuthutienMutation = gql`
-  mutation($MaDaiLy: ID!, $NgayThuTien: String, $SoTienThu: Int!) {
-    addPhieuthutien(MaDaiLy: $MaDaiLy, NgayThuTien: $NgayThuTien, SoTienThu: $SoTienThu) {
-      MaPhieuThuTien
-      MaDaiLy
-      NgayThuTien
-      SoTienThu
-    }
+mutation Mutation($maDaiLy: ID!, $soTienThu: Float!, $ngayThuTien: String) {
+  addPhieuthutien(MaDaiLy: $maDaiLy, SoTienThu: $soTienThu, NgayThuTien: $ngayThuTien) {
+    MaDaiLy
+    MaPhieuThuTien
+    NgayThuTien
+    SoTienThu
   }
+}
 `
 
 const updatePhieuthutienMutation = gql`
