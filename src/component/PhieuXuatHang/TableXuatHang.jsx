@@ -6,6 +6,10 @@ const Table = () => {
   const [rows, setRows] = useState([]);
   const [field1Values, setField1Values] = useState(['1']);
   const [currentMatHangMap, setCurrentMatHangMap] = useState({});
+  const [donGiaNhapMap, setDonGiaNhapMap] = useState({});
+  const [field3Values, setField3Values] = useState([]);
+  const [thanhTienValues, setThanhTienValues] = useState([]);
+  const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
 
   const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang);
   let allMatHang = [];
@@ -17,9 +21,17 @@ const Table = () => {
     addRow();
   }, []);
 
+  useEffect(() => {
+    // Recalculate the sum whenever "thanhTienValues" changes
+    const sum = thanhTienValues.reduce((acc, value) => acc + parseFloat(value || 0), 0);
+    setTotalThanhTien(sum);
+  }, [thanhTienValues]);
+
   const addRow = () => {
     setRows([...rows, { field1: '', field2: '', field3: '', field4: '', field5: '' }]);
     setField1Values([...field1Values, '1']);
+    setField3Values([...field3Values, '']);
+    setThanhTienValues([...thanhTienValues, '']);
   };
 
   const removeRow = (index) => {
@@ -30,10 +42,19 @@ const Table = () => {
     const updatedField1Values = [...field1Values];
     updatedField1Values.splice(index, 1);
     setField1Values(updatedField1Values);
+
+    const updatedField3Values = [...field3Values];
+    updatedField3Values.splice(index, 1);
+    setField3Values(updatedField3Values);
+
+    const updatedThanhTienValues = [...thanhTienValues];
+    updatedThanhTienValues.splice(index, 1);
+    setThanhTienValues(updatedThanhTienValues);
   };
 
   const updateFieldValue = (index, field, value) => {
     const updatedRows = [...rows];
+    const row = updatedRows[index]; // Define the row variable
     updatedRows[index][field] = value;
     setRows(updatedRows);
 
@@ -41,9 +62,7 @@ const Table = () => {
       const updatedField1Values = [...field1Values];
       updatedField1Values[index] = value;
       setField1Values(updatedField1Values);
-    }
 
-    if (field === 'field1') {
       const updatedCurrentMatHangMap = { ...currentMatHangMap };
       const matHang = allMatHang.find(item => item.MaMatHang === value);
       if (matHang && matHang.relatedDvt) {
@@ -52,6 +71,24 @@ const Table = () => {
         updatedCurrentMatHangMap[value] = 'Loading...';
       }
       setCurrentMatHangMap(updatedCurrentMatHangMap);
+
+      const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+      if (matHang) {
+        updatedDonGiaNhapMap[value] = matHang.DonGiaNhap;
+      } else {
+        updatedDonGiaNhapMap[value] = 'Loading...';
+      }
+      setDonGiaNhapMap(updatedDonGiaNhapMap);
+    } else if (field === 'field3') {
+      const updatedField3Values = [...field3Values];
+      updatedField3Values[index] = value;
+      setField3Values(updatedField3Values);
+
+      const updatedThanhTienValues = [...thanhTienValues];
+      const donGia = donGiaNhapMap[row.field1] || 0;
+      const thanhTien = parseFloat(value) * parseFloat(donGia);
+      updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien;
+      setThanhTienValues(updatedThanhTienValues);
     }
   };
 
@@ -62,16 +99,25 @@ const Table = () => {
   useEffect(() => {
     if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
       const updatedCurrentMatHangMap = { ...currentMatHangMap };
+      const updatedDonGiaNhapMap = { ...donGiaNhapMap };
       dataMatHangByID.everyMatHangByArrOfMaMatHang.forEach((matHang) => {
-        if (matHang && matHang.relatedDvt) {
+        if (matHang && matHang.MaMatHang && matHang.relatedDvt) {
           updatedCurrentMatHangMap[matHang.MaMatHang] = matHang.relatedDvt.TenDVT;
-        } else {
-          updatedCurrentMatHangMap[matHang.MaMatHang] = 'Loading...';
+          updatedDonGiaNhapMap[matHang.MaMatHang] = matHang.DonGiaNhap;
         }
       });
       setCurrentMatHangMap(updatedCurrentMatHangMap);
+      setDonGiaNhapMap(updatedDonGiaNhapMap);
     }
   }, [dataMatHangByID]);
+
+  if (loadingMatHang || loadingMatHangByID) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorMatHang || errorMatHangByID) {
+    return <div>Error occurred.</div>;
+  }
 
   return (
     <div>
@@ -104,70 +150,37 @@ const Table = () => {
                 </select>
               </td>
               <td className="border">
-                <input
-                  type="text"
-                  value={currentMatHangMap[row.field1] || 'Loading...'}
-                  className="w-full p-2"
-                  readOnly
-                />
+                {currentMatHangMap[row.field1]}
               </td>
               <td className="border">
                 <input
-                  type="text"
+                  type="number"
                   value={row.field3}
                   onChange={(e) => updateFieldValue(index, 'field3', e.target.value)}
                   className="w-full"
                 />
               </td>
               <td className="border">
-                <input
-                  type="text"
-                  value={row.field4}
-                  onChange={(e) => updateFieldValue(index, 'field4', e.target.value)}
-                  className="w-full"
-                />
+                {donGiaNhapMap[row.field1]}
               </td>
               <td className="border">
-                <input
-                  type="text"
-                  value={row.field5}
-                  onChange={(e) => updateFieldValue(index, 'field5', e.target.value)}
-                  className="w-full"
-                />
+                {thanhTienValues[index]}
               </td>
               <td className="border">
-                <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => removeRow(index)}
-                >
-                  Remove
-                </button>
+                <button className='p-2 bg-red-500 font-bold  text-white' onClick={() => removeRow(index)}>Xoá</button>
               </td>
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr className='font-bold bg-yellow-100 border border-2 border-gray-300'>
+            <td colSpan="4" className=''>Tổng tiền:</td>
+            <td>{totalThanhTien}</td>
+            <td></td>
+          </tr>
+        </tfoot>
       </table>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        onClick={addRow}
-      >
-        Add Row
-      </button>
-
-      <div className="mt-4">
-        <h2>Field 1 Values:</h2>
-        <ul>
-          {field1Values.map((value, index) => (
-            <li key={index}>{value}</li>
-          ))}
-        </ul>
-        <h2>Field 2 Values:</h2>
-        <ul>
-          {Object.entries(currentMatHangMap).map(([key, value]) => (
-            <li key={key}>{value}</li>
-          ))}
-        </ul>
-      </div>
+      <button className='p-2 bg-green-500 font-bold  text-white' onClick={addRow}>Thêm sản phẩm</button>
     </div>
   );
 };
