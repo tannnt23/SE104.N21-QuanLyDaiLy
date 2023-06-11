@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
 import { addPhieuxuathangMutation } from '../../graphql/mutations';
 
-const Table = ({ daily, date }) => {
+const Table = ({ daily }) => {
 
   // Define the mutation
   const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
@@ -13,15 +13,14 @@ const Table = ({ daily, date }) => {
     // Extract the values from the form
     const TongTien = totalThanhTien;
     const MaDaiLy = daily;
-    console.log(MaDaiLy)
-    // console.log(typeof TongTien)
-    // console.log(TongTien)
+    console.log(typeof TongTien)
+
     try {
       // Perform the mutation
       const { data } = await addPhieuxuathang({
         variables: { TongTien, MaDaiLy },
       });
-      console.log(data.MaPhieuXuat); 
+      console.log(data); 
 
     } catch (error) {
       console.log(error);

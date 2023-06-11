@@ -5,7 +5,7 @@ import TableXuatHang from './TableXuatHang';
 
 function PhieuXuatHang() {
     const [selectedDaily, setSelectedDaily] = useState('');
-    const [selectedDate, setSelectedDate] = useState('');
+    // const [selectedDate, setSelectedDate] = useState('');
 
     const { loading: dailyLoading, error: dailyError, data: dailyData } = useQuery(queryEveryDaily);
 
@@ -25,9 +25,9 @@ function PhieuXuatHang() {
         setSelectedDaily(event.target.value);
     };
 
-    const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-    };
+    // const handleDateChange = (event) => {
+    //     setSelectedDate(event.target.value);
+    // };
 
     return (
         <div>
@@ -49,7 +49,7 @@ function PhieuXuatHang() {
                     ))}
                 </select>
 
-                <label htmlFor="date-input" className="block mb-2 font-bold">
+                {/* <label htmlFor="date-input" className="block mb-2 font-bold">
                     Ngày lập phiếu
                 </label>
                 <input
@@ -60,10 +60,10 @@ function PhieuXuatHang() {
                     placeholder="dd-mm-yyyy"
                     value={selectedDate}
                     onChange={handleDateChange}
-                />
+                /> */}
             </div>
 
-            <TableXuatHang daily={selectedDaily} date={selectedDate} />
+            <TableXuatHang daily={selectedDaily} />
         </div>
     );
 }

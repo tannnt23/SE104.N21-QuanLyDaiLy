@@ -212,7 +212,7 @@ const deleteMathangMutation = gql`
 `
 
 const addPhieuxuathangMutation = gql`
-  mutation($NgayLapPhieu: String, $TongTien: Int!, $MaDaiLy: ID!) {
+  mutation($NgayLapPhieu: String, $TongTien: Float!, $MaDaiLy: ID!) {
     addPhieuxuathang(NgayLapPhieu: $NgayLapPhieu, TongTien: $TongTien, MaDaiLy: $MaDaiLy) {
       MaPhieuXuat
       NgayLapPhieu
