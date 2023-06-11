@@ -5,7 +5,6 @@ import Success from "../../component/pop_up/Success";
 import { useQuery, useMutation } from '@apollo/client';
 import { queryEveryDaily } from '../../graphql/queries';
 import { updateDailyMutation, addPhieuthutienMutation } from '../../graphql/mutations'
-import { updateDailyMutation, addPhieuthutienMutation } from '../../graphql/mutations'
 import { useState, useEffect } from 'react';
 
 function LapPhieuThuTien() {

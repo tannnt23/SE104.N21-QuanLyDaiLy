@@ -302,16 +302,16 @@ const deleteBaocaodoanhsoMutation = gql`
 `
 
 const addCt_bcdsMutation = gql`
-  mutation($MaBaoCaoDoanhSo: ID!, $MaDaiLy: ID!, $SoPhieuXuat: Int!, $TongTriGia: Float!, $Tyle: Float!) {
-    addCt_bcds(MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo, MaDaiLy: $MaDaiLy, SoPhieuXuat: $SoPhieuXuat, TongTriGia: $TongTriGia, Tyle: $Tyle) {
-      MaCT_BCDS
-      MaBaoCaoDoanhSo
-      MaDaiLy
-      SoPhieuXuat
-      TongTriGia
-      Tyle
-    }
+mutation AddCt_bcds($maBaoCaoDoanhSo: ID!, $maDaiLy: ID!, $soPhieuXuat: Int!, $tongTriGia: Int!, $tyLe: Float!) {
+  addCt_bcds(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo, MaDaiLy: $maDaiLy, SoPhieuXuat: $soPhieuXuat, TongTriGia: $tongTriGia, TyLe: $tyLe) {
+    MaBaoCaoDoanhSo
+    MaCT_BCDS
+    MaDaiLy
+    SoPhieuXuat
+    TongTriGia
+    TyLe
   }
+}
 `
 
 const updateCt_bcdsMutation = gql`

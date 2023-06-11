@@ -38,20 +38,22 @@ function BaoCaoCongNo() {
     if (error) setShowError(error);
 
     const handleNameChange = (event) => {
+        setShowError(null)
         setName(event.target.value);
     };
 
     const handleDateChange = (event) => {
+        setShowError(null)
         setDate(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         let option = parseInt(name.split(' ')[1])
         let tenDaiLy = daiLy[option].TenDaiLy
 
-        getDLViaMonth({
+        await getDLViaMonth({
             variables: {
                 'tenDaiLy': tenDaiLy,
                 'thang': [date.split('-')[0], date.split('-')[1]].join('-')
@@ -85,13 +87,9 @@ function BaoCaoCongNo() {
 
     )
 
-    const renderErrorComponent = (error) => {
-        return <Error error={error} />;
-    };
-
     return (
         <div>
-            {renderErrorComponent(showError)}
+            {showError && <Error error={showError} />}
             {/* Heading */}
             <div className="flex justify-center items-center">
                 <BackButton className="mr-4" />

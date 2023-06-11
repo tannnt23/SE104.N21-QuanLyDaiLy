@@ -1,55 +1,52 @@
 import BackButton from "../../component/button/backbutton/BackButton";
+import Error from "../../component/pop_up/Error";
 
-import { useQuery } from '@apollo/client';
-import {
-    queryEveryDaily
-} from '../../graphql/queries';
+import { useQuery, useLazyQuery } from '@apollo/client';
+import {queryEveryDaily, queryCt_bcdsByTenDLAndThang} from '../../graphql/queries';
 import { useState, useEffect } from 'react';
 
 function BaoCaoDoanhThu() {
-    const { loading, error, data } = useQuery(queryEveryDaily);
     const [daiLy, setDaiLy] = useState([])
     const [name, setName] = useState('option 0');
     const [date, setDate] = useState('');
     const [tableData, setTableData] = useState(null);
+    const [showError, setShowError] = useState(null);
+
+    const { loading, error, data } = useQuery(queryEveryDaily);
+    const [queryFunc, dataQuery] = useLazyQuery(queryCt_bcdsByTenDLAndThang);
 
     useEffect(() => {
-        if (data) {
-            console.log(data)
-            setDaiLy(data.everyDaily)
-        }
-    }, [data]);
+        if (data) setDaiLy(data.everyDaily)
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+        if(dataQuery.data) setTableData(dataQuery.data.ct_bcdsByTenDLAndThang[0])
+        else setShowError(dataQuery.error)
 
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
+    }, [data, dataQuery, showError]);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) setShowError(error);
+    
 
     const handleNameChange = (event) => {
+        setShowError(null)
         setName(event.target.value);
     };
 
     const handleDateChange = (event) => {
+        setShowError(null)
         setDate(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         let option = parseInt(name.split(' ')[1])
-        let choosen = daiLy[option]
+        let date_ = [date.split('-')[0], date.split('-')[1]].join("-")
 
-        const newData = {
-            name: choosen.TenDaiLy,
-            noDau: 1000, // Giá trị tùy ý, có thể thay đổi
-            phatSinh: 500, // Giá trị tùy ý, có thể thay đổi
-            noCuoi: 1500, // Giá trị tùy ý, có thể thay đổi
-        }
-
-        setTableData(newData);
+        await queryFunc({variables : {
+            tenDaiLy: daiLy[option].TenDaiLy,
+            thang: date_
+        }})
     };
 
     const createTable = () => (
@@ -67,10 +64,10 @@ function BaoCaoDoanhThu() {
                 </thead>
                 <tbody>
                     <tr>
-                        <td className="border border-gray-300 px-4 py-2">{tableData.name}</td>
-                        <td className="border border-gray-300 px-4 py-2">{tableData.noDau}</td>
-                        <td className="border border-gray-300 px-4 py-2">{tableData.phatSinh}</td>
-                        <td className="border border-gray-300 px-4 py-2">{tableData.noCuoi}</td>
+                        <td className="border border-gray-300 px-4 py-2">{tableData?.relatedDaily?.TenDaiLy}</td>
+                        <td className="border border-gray-300 px-4 py-2">{tableData.SoPhieuXuat}</td>
+                        <td className="border border-gray-300 px-4 py-2">{tableData.TongTriGia}</td>
+                        <td className="border border-gray-300 px-4 py-2">{tableData.TyLe}</td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -87,6 +84,7 @@ function BaoCaoDoanhThu() {
 
     return (
         <div>
+            {showError && <Error error={showError} />}
             {/* Heading */}
             <div className="flex justify-center items-center">
                 <BackButton className="mr-4" />
