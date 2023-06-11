@@ -1,30 +1,49 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { queryEveryDaily } from '../../graphql/queries';
+import { useQuery, useLazyQuery } from '@apollo/client';
+import { queryEveryDaily, queryEveryMathang, queryDvtById } from '../../graphql/queries';
+
 
 const PhieuXuatHang = () => {
     const [rows, setRows] = useState([{ id: 1, values: ['', '', '', '', ''] }]);
     const [selectedDaily, setSelectedDaily] = useState('');
+    const [selectedMathang, setSelectedMathang] = useState([]);
     const [calculatedValues, setCalculatedValues] = useState([]);
-    const { loading, error, data } = useQuery(queryEveryDaily);
+    const [selectedDVT, setSelectedDVT] = useState([]);
+    const { loading: dailyLoading, error: dailyError, data: dailyData } = useQuery(queryEveryDaily);
+    const { loading: mathangLoading, error: mathangError, data: mathangData } = useQuery(queryEveryMathang);
+    console.log(rows   )
 
+    // useEffect(() => {
+    //     if (dailyData && dailyData.everyDaily.length > 0) {
+    //         setSelectedDaily(dailyData.everyDaily[0].TenDaiLy);
+    //     }
+    // }, [dailyData]);
 
-    useEffect(() => {
-        if (data && data.everyDaily.length > 0) {
-            setSelectedDaily(data.everyDaily[0].TenDaiLy);
-        }
-    }, [data]);
-
-    if (loading) {
+    if (dailyLoading) {
         return <div>Loading...</div>;
     }
 
-    if (error) {
-        return <div>Error fetching data</div>;
+    if (dailyError) {
+        return <div>Error fetching dailyData</div>;
+    }
+    if (mathangLoading) {
+        return <div>Loading...</div>;
     }
 
+    if (mathangError) {
+        return <div>Error fetching mathangData</div>;
+    }
+
+    //ten dai ly
     const handleSelectionChange = (event) => {
         setSelectedDaily(event.target.value);
+    };
+
+
+    //ten mat hang
+    const handleSelection = (e) => {
+        const selectedValue = e.target.value;
+        setSelectedMathang([...selectedMathang, selectedValue]);
     };
 
     const handleAddRow = () => {
@@ -45,15 +64,33 @@ const PhieuXuatHang = () => {
         updatedRows[rowIndex].values[inputIndex] = value;
         setRows(updatedRows);
 
+        // Update the selectedMathang state if inputIndex is 0 (Mặt hàng column)
+        if (inputIndex === 0) {
+            setSelectedMathang((prevSelectedMathang) => {
+                const updatedSelectedMathang = [...prevSelectedMathang];
+                updatedSelectedMathang[rowIndex] = value;
+                return updatedSelectedMathang;
+            });
+        }
+
         // Calculate the value and update the calculatedValues state
         const column2Value = parseFloat(updatedRows[rowIndex].values[2]);
         const column3Value = parseFloat(updatedRows[rowIndex].values[3]);
-        const result = isNaN(column2Value) || isNaN(column3Value) ? '' : column2Value * column3Value;
+
+        let result = '';
+
+        if (inputIndex === 0) {
+            const selectedMathang = mathangData.everyMathang.find((mathang) => mathang.TenMatHang === value);
+            result = selectedMathang ? selectedMathang.DonGia : '';
+        } else {
+            result = isNaN(column2Value) || isNaN(column3Value) ? '' : column2Value * column3Value;
+        }
 
         const updatedCalculatedValues = [...calculatedValues];
         updatedCalculatedValues[rowIndex] = result;
         setCalculatedValues(updatedCalculatedValues);
     };
+
 
 
     return (
@@ -68,7 +105,7 @@ const PhieuXuatHang = () => {
                     onChange={handleSelectionChange}
                     className="border rounded-md p-2 mb-4"
                 >
-                    {data.everyDaily.map((daily) => (
+                    {dailyData.everyDaily.map((daily) => (
                         <option key={daily.MaDaiLy} value={daily.TenDaiLy}>
                             {daily.TenDaiLy}
                         </option>
@@ -102,40 +139,50 @@ const PhieuXuatHang = () => {
                         <tr key={row.id} className="">
                             {row.values.map((value, inputIndex) => (
                                 <td key={inputIndex} className='p-2'>
-                                    {inputIndex === 0 || inputIndex === 1 ? (
-                                        <select
-                                            // value={value.matHang}
-                                            // onChange={(event) => handleInputChange(event, rowIndex, inputIndex)}
-                                            className="border border-gray-400 mr-2 p-2"
-                                        >
-                                            <option value="Option 1">Option 1</option>
-                                            <option value="Option 2">Option 2</option>
-                                            <option value="Option 3">Option 3</option>
-                                            {/* Add more options as needed */}
+                                    {inputIndex === 0 ? (
+                                        <select onChange={handleSelection}>
+                                            {mathangData.everyMathang.map((mathang) => (
+                                                <option key={mathang.MaMatHang} value={mathang.TenMatHang}>
+                                                    {mathang.TenMatHang}
+                                                </option>
+                                            ))}
                                         </select>
-                                    ) : inputIndex === 4 ? (
+                                        // <select name="" id="">
+                                        //     <option value="">1</option>
+                                        //     <option value="">1</option>
+                                        //     <option value="">1</option>
+                                        // </select>
+                                    ) : inputIndex === 1 ? (
                                         <input
-                                            className="border border-gray-400 mr-2 p-2 bg-yellow-100 font-semibold text-center pointer-events-none"
-                                            value={calculatedValues[rowIndex]}
+                                            className="border border-gray-400 mr-2 p-2 font-semibold text-center pointer-events-none"
+                                            value={selectedMathang[inputIndex]}
                                         />
                                     ) :
-                                        (
+                                        inputIndex === 4 ? (
                                             <input
-                                                type="text"
-                                                value={value}
-                                                onChange={(event) => handleInputChange(event, rowIndex, inputIndex)}
-                                                className="border border-gray-400 mr-2 p-2 "
+                                                className="border border-gray-400 mr-2 p-2 bg-yellow-100 font-semibold text-center pointer-events-none"
+                                                value={calculatedValues[rowIndex]}
                                             />
-                                        )}
+                                        ) :
+                                            (
+                                                <input
+                                                    type="text"
+                                                    value={value}
+                                                    onChange={(event) => handleInputChange(event, rowIndex, inputIndex)}
+                                                    className="border border-gray-400 mr-2 p-2 "
+                                                />
+                                            )}
                                 </td>
                             ))}
-                            <button
-                                type="button"
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4"
-                                onClick={() => handleRemoveRow(row.id)}
-                            >
-                                Remove
-                            </button>
+                            <td>
+                                <button
+                                    type="button"
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4"
+                                    onClick={() => handleRemoveRow(row.id)}
+                                >
+                                    Xoá
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -144,10 +191,10 @@ const PhieuXuatHang = () => {
 
             <button
                 type="button"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-4"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mb-4"
                 onClick={handleAddRow}
             >
-                Add Row
+                Thêm mặt hàng
             </button>
         </div>
     );

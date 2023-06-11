@@ -1,15 +1,15 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import InputTable2 from "../../component/form/InputTable2";
+// import InputTable2 from "../../component/form/InputTable2";
 
 function LapPhieuThuTien() {
     return (
         <div>
-            <BackButton />
-            {/* Heading */}
+            {/* <BackButton />
+           
             <div className="flex flex justify-center">
                 <h2 className="text-4xl font-bold">Phiếu xuất hàng</h2>
             </div>
-            {/* Form */}
+        
             <div>
                 <form className="p-4">
                     <div className="flex flex-col w-1/3">
@@ -36,7 +36,7 @@ function LapPhieuThuTien() {
                     </div>
 
                 </form>
-            </div>
+            </div> */}
 
         </div>
     )

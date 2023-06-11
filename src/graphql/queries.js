@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
 const queryEveryDaily = gql`
   {
@@ -17,7 +17,7 @@ const queryEveryDaily = gql`
 `
 
 const queryDailyById = gql`
-  query($MaDaiLy: ID!) {
+  query ($MaDaiLy: ID!) {
     daily(MaDaiLy: $MaDaiLy) {
       MaDaiLy
       TenDaiLy
@@ -42,7 +42,7 @@ const queryEveryQuan = gql`
 `
 
 const queryQuanById = gql`
-  query($MaQuan: ID!) {
+  query ($MaQuan: ID!) {
     quan(MaQuan: $MaQuan) {
       MaQuan
       TenQuan
@@ -61,7 +61,7 @@ const queryEveryLoaidaily = gql`
 `
 
 const queryLoaidailyById = gql`
-  query($MaLoaiDaiLy: ID!) {
+  query ($MaLoaiDaiLy: ID!) {
     loaidaily(MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaLoaiDaiLy
       TenLoaiDaiLy
@@ -80,7 +80,7 @@ const queryEveryDvt = gql`
 `
 
 const queryDvtById = gql`
-  query($MaDVT: ID!) {
+  query ($MaDVT: ID!) {
     dvt(MaDVT: $MaDVT) {
       MaDVT
       TenDVT
@@ -99,7 +99,7 @@ const queryEveryPhieunhaphang = gql`
 `
 
 const queryPhieunhaphangById = gql`
-  query($MaPhieuNhap: ID!) {
+  query ($MaPhieuNhap: ID!) {
     phieunhaphang(MaPhieuNhap: $MaPhieuNhap) {
       MaPhieuNhap
       SoLuong
@@ -111,23 +111,29 @@ const queryPhieunhaphangById = gql`
 const queryEveryMathang = gql`
   {
     everyMathang {
-      MaMatHang
-      TenMatHang
-      SoLuongTon
       DonGiaNhap
       MaDVT
+      MaMatHang
+      SoLuongTon
+      TenMatHang
+      relatedDvt {
+        TenDVT
+      }
     }
   }
 `
 
 const queryMathangById = gql`
-  query($MaMatHang: ID!) {
+  query ($MaMatHang: ID!) {
     mathang(MaMatHang: $MaMatHang) {
       MaMatHang
       TenMatHang
       SoLuongTon
       DonGiaNhap
       MaDVT
+      relatedDvt {
+        TenDVT
+      }
     }
   }
 `
@@ -144,7 +150,7 @@ const queryEveryPhieuxuathang = gql`
 `
 
 const queryPhieuxuathangById = gql`
-  query($MaPhieuXuat: ID!) {
+  query ($MaPhieuXuat: ID!) {
     phieuxuathang(MaPhieuXuat: $MaPhieuXuat) {
       MaPhieuXuat
       NgayLapPhieu
@@ -165,7 +171,7 @@ const queryEveryCt_phieuxuathang = gql`
 `
 
 const queryCt_phieuxuathangById = gql`
-  query($MaCT_PXH: ID!) {
+  query ($MaCT_PXH: ID!) {
     ct_phieuxuathang(MaCT_PXH: $MaCT_PXH) {
       MaCT_PXH
       MaPhieuXuat
@@ -184,7 +190,7 @@ const queryEveryBaocaodoanhso = gql`
 `
 
 const queryBaocaodoanhsoById = gql`
-  query($MaBaoCaoDoanhSo: ID!) {
+  query ($MaBaoCaoDoanhSo: ID!) {
     baocaodoanhso(MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo) {
       MaBaoCaoDoanhSo
       Thang
@@ -206,7 +212,7 @@ const queryEveryCt_bcds = gql`
 `
 
 const queryCt_bcdsById = gql`
-  query($MaCT_BCDS: ID!) {
+  query ($MaCT_BCDS: ID!) {
     ct_bcds(MaCT_BCDS: $MaCT_BCDS) {
       MaCT_BCDS
       MaBaoCaoDoanhSo
@@ -230,7 +236,7 @@ const queryEveryPhieuthutien = gql`
 `
 
 const queryPhieuthutienById = gql`
-  query($MaPhieuThuTien: ID!) {
+  query ($MaPhieuThuTien: ID!) {
     phieuthutien(MaPhieuThuTien: $MaPhieuThuTien) {
       MaPhieuThuTien
       MaDaiLy
@@ -250,7 +256,7 @@ const queryEveryBaocaocongno = gql`
 `
 
 const queryBaocaocongnoById = gql`
-  query($MaBaoCaoCongNo: ID!) {
+  query ($MaBaoCaoCongNo: ID!) {
     baocaocongno(MaBaoCaoCongNo: $MaBaoCaoCongNo) {
       MaBaoCaoCongNo
       Thang
@@ -272,7 +278,7 @@ const queryEveryCt_bccn = gql`
 `
 
 const queryCt_bccnById = gql`
-  query($MaCT_BCCN: ID!) {
+  query ($MaCT_BCCN: ID!) {
     ct_bccn(MaCT_BCCN: $MaCT_BCCN) {
       MaCT_BCCN
       MaBaoCaoCongNo
@@ -284,4 +290,31 @@ const queryCt_bccnById = gql`
   }
 `
 
-export { queryEveryDaily, queryDailyById, queryEveryQuan, queryQuanById, queryEveryLoaidaily, queryLoaidailyById, queryEveryDvt, queryDvtById, queryEveryPhieunhaphang, queryPhieunhaphangById, queryEveryMathang, queryMathangById, queryEveryPhieuxuathang, queryPhieuxuathangById, queryEveryCt_phieuxuathang, queryCt_phieuxuathangById, queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds, queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno, queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById };
+export {
+  queryEveryDaily,
+  queryDailyById,
+  queryEveryQuan,
+  queryQuanById,
+  queryEveryLoaidaily,
+  queryLoaidailyById,
+  queryEveryDvt,
+  queryDvtById,
+  queryEveryPhieunhaphang,
+  queryPhieunhaphangById,
+  queryEveryMathang,
+  queryMathangById,
+  queryEveryPhieuxuathang,
+  queryPhieuxuathangById,
+  queryEveryCt_phieuxuathang,
+  queryCt_phieuxuathangById,
+  queryEveryBaocaodoanhso,
+  queryBaocaodoanhsoById,
+  queryEveryCt_bcds,
+  queryCt_bcdsById,
+  queryEveryPhieuthutien,
+  queryPhieuthutienById,
+  queryEveryBaocaocongno,
+  queryBaocaocongnoById,
+  queryEveryCt_bccn,
+  queryCt_bccnById
+}
