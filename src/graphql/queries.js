@@ -319,6 +319,19 @@ const queryCt_bccnById = gql`
   }
 `
 
+const queryCt_bccnByTenDLAndThang = gql`
+query Ct_bccnByTenDLAndThang($tenDaiLy: String!, $thang: String!) {
+  ct_bccnByTenDLAndThang(TenDaiLy: $tenDaiLy, Thang: $thang) {
+    NoCuoi
+    NoDau
+    PhatSinh
+    relatedDaily {
+      TenDaiLy
+      MaDaiLy
+    }
+  }
+}`
+
 
 
 export {
@@ -329,5 +342,6 @@ export {
   queryEveryCt_phieuxuathang, queryCt_phieuxuathangById,
   queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds,
   queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno,
-  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo, queryMatHangByIdArr
+  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo, queryMatHangByIdArr,
+  queryCt_bccnByTenDLAndThang
 };
