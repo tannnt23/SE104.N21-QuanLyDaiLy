@@ -177,10 +177,17 @@ const PhieuXuatHang = () => {
                             <td>
                                 <button
                                     type="button"
+<<<<<<< HEAD
                                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4"
                                     onClick={() => handleRemoveRow(row.id)}
                                 >
                                     Xoá
+=======
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold p-2"
+                                    onClick={() => handleRemoveRow(row.id)}
+                                >
+                                    Remove
+>>>>>>> aaf2509a388d32c5da317f36a47cf668671be88d
                                 </button>
                             </td>
                         </tr>

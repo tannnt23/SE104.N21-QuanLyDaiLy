@@ -1,5 +1,19 @@
 import { gql } from '@apollo/client'
 
+const queryThamSo = gql`
+  {
+    thamso {
+      SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+      SoLuongMatHang
+      SoLuongLoaiDaiLy
+      SoLuongDVT
+      SoDaiLyToiDaTrongQuan
+      MaThamSo
+      TyLeDonGiaXuat
+    }
+  }
+`
+
 const queryEveryDaily = gql`
   {
     everyDaily {
@@ -306,6 +320,7 @@ const queryCt_bccnById = gql`
 `
 
 export {
+<<<<<<< HEAD
   queryMatHangByIdArr,
   queryEveryDaily,
   queryDailyById,
@@ -334,3 +349,14 @@ export {
   queryEveryCt_bccn,
   queryCt_bccnById
 }
+=======
+  queryEveryDaily, queryDailyById, queryEveryQuan, queryQuanById, queryEveryLoaidaily,
+  queryLoaidailyById, queryEveryDvt, queryDvtById, queryEveryPhieunhaphang,
+  queryPhieunhaphangById, queryEveryMathang,
+  queryMathangById, queryEveryPhieuxuathang, queryPhieuxuathangById,
+  queryEveryCt_phieuxuathang, queryCt_phieuxuathangById,
+  queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds,
+  queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno,
+  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo
+};
+>>>>>>> aaf2509a388d32c5da317f36a47cf668671be88d

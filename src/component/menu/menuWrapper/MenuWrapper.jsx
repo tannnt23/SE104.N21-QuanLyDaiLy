@@ -45,16 +45,19 @@ function MenuWrapper() {
       id: 6,
       label: "Báo cáo công nợ",
       icon: <SummarizeIcon fontSize="large" />,
+      link : 'bao-cao-cong-no',
     },
     {
       id: 7,
-      label: "Báo cáo doanh số",
+      label: "Báo cáo doanh thu",
       icon: <BarChartIcon fontSize="large" />,
+      link : 'bao-cao-doanh-thu',
     },
     {
       id: 8,
       label: "Thay đổi quy định",
       icon: <DisplaySettingsIcon fontSize="large" />,
+      link: 'thay-doi-quy-dinh'
     },
 
   ];
