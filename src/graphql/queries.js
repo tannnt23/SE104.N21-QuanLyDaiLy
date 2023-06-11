@@ -1,5 +1,19 @@
 import { gql } from "@apollo/client"
 
+const queryThamSo = gql`
+  {
+    thamso {
+      SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+      SoLuongMatHang
+      SoLuongLoaiDaiLy
+      SoLuongDVT
+      SoDaiLyToiDaTrongQuan
+      MaThamSo
+      TyLeDonGiaXuat
+    }
+  }
+`
+
 const queryEveryDaily = gql`
   {
     everyDaily {
@@ -284,4 +298,13 @@ const queryCt_bccnById = gql`
   }
 `
 
-export { queryEveryDaily, queryDailyById, queryEveryQuan, queryQuanById, queryEveryLoaidaily, queryLoaidailyById, queryEveryDvt, queryDvtById, queryEveryPhieunhaphang, queryPhieunhaphangById, queryEveryMathang, queryMathangById, queryEveryPhieuxuathang, queryPhieuxuathangById, queryEveryCt_phieuxuathang, queryCt_phieuxuathangById, queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds, queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno, queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById };
+export {
+  queryEveryDaily, queryDailyById, queryEveryQuan, queryQuanById, queryEveryLoaidaily,
+  queryLoaidailyById, queryEveryDvt, queryDvtById, queryEveryPhieunhaphang,
+  queryPhieunhaphangById, queryEveryMathang,
+  queryMathangById, queryEveryPhieuxuathang, queryPhieuxuathangById,
+  queryEveryCt_phieuxuathang, queryCt_phieuxuathangById,
+  queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds,
+  queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno,
+  queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo
+};

@@ -1,10 +1,19 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { useQuery, useMutation } from '@apollo/client'
+import { queryThamSo } from "../../graphql/queries";
+import { updateThamsoMutation } from "../../graphql/mutations";
 
 function ThayDoiThamSo() {
+    const { loading, error, data, refetch } = useQuery(queryThamSo);
+    const [doUpdateThamSo, { loading: updateLoading, error: updateError }] =
+        useMutation(updateThamsoMutation);
     const [maxAgents, setMaxAgents] = useState('');
     const [allowOverdue, setAllowOverdue] = useState('true');
     const [unitPrice, setUnitPrice] = useState('');
+
+    console.log(data);
+    const thamSo = data.thamso
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,6 +28,13 @@ function ThayDoiThamSo() {
         setAllowOverdue('true');
         setUnitPrice('');
     };
+
+
+
+    if (loading && updateLoading) return 'Loading...';
+
+    if (error && updateError) return `Error! ${error.message} || ${updateError.message}`;
+
     return (
         <div>
             {/* Heading */}
@@ -30,12 +46,42 @@ function ThayDoiThamSo() {
             <div className="w-1/2 ml-0">
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4 flex items-center">
+                        <label className="w-auto mr-3">Số lượng loại đại lý tối đa:</label>
+                        <input
+                            type="number"
+                            id="max-agents"
+                            className="border border-gray-300 p-2 flex-grow"
+                            value={thamSo.SoLuongLoaiDaiLy}
+                            onChange={(e) => setMaxAgents(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4 flex items-center">
                         <label className="w-auto mr-3">Số đại lý tối đa trong một quận:</label>
                         <input
                             type="number"
                             id="max-agents"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={maxAgents}
+                            value={thamSo.SoDaiLyToiDaTrongQuan}
+                            onChange={(e) => setMaxAgents(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4 flex items-center">
+                        <label className="w-auto mr-3">Số lượng mặt hàng:</label>
+                        <input
+                            type="number"
+                            id="max-agents"
+                            className="border border-gray-300 p-2 flex-grow"
+                            value={thamSo.SoLuongMatHang}
+                            onChange={(e) => setMaxAgents(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4 flex items-center">
+                        <label className="w-auto mr-3">Số lượng đơn vị tính:</label>
+                        <input
+                            type="number"
+                            id="max-agents"
+                            className="border border-gray-300 p-2 flex-grow"
+                            value={thamSo.SoLuongDVT}
                             onChange={(e) => setMaxAgents(e.target.value)}
                         />
                     </div>
@@ -44,11 +90,11 @@ function ThayDoiThamSo() {
                         <select
                             id="allow-overdue"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={allowOverdue}
+                            value={thamSo.SoTienThuKhongVuotQuaSoTienDaiLyDangNo ? "True" : "False"}
                             onChange={(e) => setAllowOverdue(e.target.value)}
                         >
-                            <option value="true">True</option>
-                            <option value="false">False</option>
+                            <option value="True">True</option>
+                            <option value="False">False</option>
                         </select>
                     </div>
                     <div className="mb-4 flex items-center">
@@ -57,7 +103,7 @@ function ThayDoiThamSo() {
                             type="number"
                             id="unit-price"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={unitPrice}
+                            value={thamSo.TyLeDonGiaXuat}
                             onChange={(e) => setUnitPrice(e.target.value)}
                         />
                     </div>

@@ -1,5 +1,18 @@
 import { gql } from '@apollo/client'
 
+const updateThamsoMutation = gql`
+  mutation($soLuongLoaiDaiLy: Int, $soDaiLyToiDaTrongQuan: Int, $soLuongMatHang: Int, $soLuongDvt: Int, $soTienThuKhongVuotQuaSoTienDaiLyDangNo: Int, $tyLeDonGiaXuat: Float) {
+  updateThamso(SoLuongLoaiDaiLy: $soLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan: $soDaiLyToiDaTrongQuan, SoLuongMatHang: $soLuongMatHang, SoLuongDVT: $soLuongDvt, SoTienThuKhongVuotQuaSoTienDaiLyDangNo: $soTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat: $tyLeDonGiaXuat) {
+    MaThamSo
+    SoDaiLyToiDaTrongQuan
+    SoLuongDVT
+    SoLuongLoaiDaiLy
+    SoLuongMatHang
+    SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+    TyLeDonGiaXuat
+  }
+}
+`
 const addDailyMutation = gql`
   mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
     addDaily(TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
@@ -466,4 +479,5 @@ export {
   addCt_bccnMutation,
   updateCt_bccnMutation,
   deleteCt_bccnMutation,
+  updateThamsoMutation
 };
