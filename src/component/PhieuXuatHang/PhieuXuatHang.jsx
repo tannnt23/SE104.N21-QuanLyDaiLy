@@ -25,9 +25,6 @@ function PhieuXuatHang() {
         setSelectedDaily(event.target.value);
     };
 
-    // const handleDateChange = (event) => {
-    //     setSelectedDate(event.target.value);
-    // };
 
     return (
         <div>
@@ -49,18 +46,6 @@ function PhieuXuatHang() {
                     ))}
                 </select>
 
-                {/* <label htmlFor="date-input" className="block mb-2 font-bold">
-                    Ngày lập phiếu
-                </label>
-                <input
-                    type="date"
-                    id="date-input"
-                    className="border rounded-md p-2"
-                    pattern="\d{2}-\d{2}-\d{4}"
-                    placeholder="dd-mm-yyyy"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                /> */}
             </div>
 
             <TableXuatHang daily={selectedDaily} />
