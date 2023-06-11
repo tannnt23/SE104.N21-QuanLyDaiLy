@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useState, } from 'react';
+import { useQuery} from '@apollo/client';
 import { queryEveryDaily, queryEveryMathang, queryDvtById } from '../../graphql/queries';
 
 

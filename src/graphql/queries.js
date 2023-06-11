@@ -137,6 +137,21 @@ const queryMathangById = gql`
     }
   }
 `
+const queryMatHangByIdArr = gql`
+  query MathangbyarrofId($maMatHangArr: [ID!]!) {
+    everyMatHangByArrOfMaMatHang(MaMatHangArr: $maMatHangArr) {
+      MaMatHang
+      MaDVT
+      DonGiaNhap
+      SoLuongTon
+      TenMatHang
+      relatedDvt {
+        MaDVT
+        TenDVT
+      }
+    }
+  }
+`
 
 const queryEveryPhieuxuathang = gql`
   {
@@ -291,6 +306,7 @@ const queryCt_bccnById = gql`
 `
 
 export {
+  queryMatHangByIdArr,
   queryEveryDaily,
   queryDailyById,
   queryEveryQuan,

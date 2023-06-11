@@ -1,4 +1,4 @@
-import PhieuXuatHang from "../../component/PhieuXuatHang/PhieuXuatHang"
+// import PhieuXuatHang from "../../component/PhieuXuatHang/PhieuXuatHang"
 import MyComponent from "../../component/PhieuXuatHang/MyComponent"
 
 function LapPhieuXuatHang() {

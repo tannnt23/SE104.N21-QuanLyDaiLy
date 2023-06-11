@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useLazyQuery } from '@apollo/client';
-import { queryMathangById,  queryEveryMathang} from '../../graphql/queries';
+import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
 
 const Table = () => {
   const [rows, setRows] = useState([]);
-  const [field1Values, setField1Values] = useState([2]);
+  const [field1Values, setField1Values] = useState(['1']);
   const [field2Values, setField2Values] = useState([]); //don vi tinh
-  console.log("Ma mat hang current:", field1Values)
 
-  const { loading: loadingMatHang, error: errorMatHang, data:dataMatHang } = useQuery(queryEveryMathang)
-  const { loading: loadingMatHangByID, error: errorMatHangByID, data:dataMatHangByID } = useQuery(queryMathangById, {
-    // variables: {MaMatHang: field1Values}
-  })
 
-  // if(dataMatHangByID){
-  //   console.log(dataMatHangByID.mathang)
-  // }
-
+  const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang)
   let allMatHang = []
-  if(dataMatHang && dataMatHang.everyMathang){
+  if (dataMatHang && dataMatHang.everyMathang) {
     allMatHang = dataMatHang.everyMathang
   }
+  // console.log(typeof field1Values[0])
+
+  const { loading: loadingMatHangByID, error: errorMatHangByID, data: dataMatHangByID } = useQuery(queryMatHangByIdArr, {
+    variables: { maMatHangArr: field1Values }
+  })
+  let allCurrentMatHang = []
+  if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
+    allCurrentMatHang = dataMatHangByID.everyMatHangByArrOfMaMatHang
+  }
+  // console.log(typeof allCurrentMatHang[0])
   
- 
 
   useEffect(() => {
     addRow();
@@ -30,7 +31,7 @@ const Table = () => {
 
   const addRow = () => {
     setRows([...rows, { field1: '', field2: '', field3: '', field4: '', field5: '' }]);
-    setField1Values([...field1Values, '']);
+    setField1Values([...field1Values, '1']);
   };
 
   const removeRow = (index) => {
@@ -43,18 +44,17 @@ const Table = () => {
     setField1Values(updatedField1Values);
   };
 
-  const updateFieldValue = (index, field, value, data) => {
+  const updateFieldValue = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
     setRows(updatedRows);
 
     if (field === 'field1') {
       const updatedField1Values = [...field1Values];
-      const updatedField2Values = [...field2Values];
       updatedField1Values[index] = value;
-      updatedField2Values[index] = data;
       setField1Values(updatedField1Values);
-      setField2Values(updatedField2Values);
+
+
     }
   };
 
@@ -63,11 +63,11 @@ const Table = () => {
       <table className="table-auto border-collapse border">
         <thead>
           <tr>
-            <th className="border">Field 1</th>
-            <th className="border">Field 2</th>
-            <th className="border">Field 3</th>
-            <th className="border">Field 4</th>
-            <th className="border">Field 5</th>
+            <th className="border">Mặt hàng</th>
+            <th className="border">Đơn vị tính</th>
+            <th className="border">Số lượng</th>
+            <th className="border">Đơn giá</th>
+            <th className="border">Thành tiền</th>
             <th className="border">Action</th>
           </tr>
         </thead>
@@ -82,10 +82,10 @@ const Table = () => {
                 >
                   <option value="">Select</option>
                   {
-                    allMatHang.map((matHang, index)=> 
-                      (
-                        <option key={matHang.MaMatHang} value={matHang.MaMatHang} data={matHang.relatedDvt.TenDVT}>{matHang.TenMatHang}</option>
-                      )
+                    allMatHang.map((matHang, index) =>
+                    (
+                      <option key={matHang.MaMatHang} value={matHang.MaMatHang}>{matHang.TenMatHang}</option>
+                    )
                     )
                   }
                 </select>
@@ -93,9 +93,9 @@ const Table = () => {
               <td className="border">
                 <input
                   type="text"
-                  value={row.field2}
-                  onChange={(e) => updateFieldValue(index, 'field2', e.target.value)}
-                  className="w-full"
+                  value={(allCurrentMatHang[index] !== undefined) ? allCurrentMatHang[index].relatedDvt.TenDVT : 'Loading...'}
+                  // onChange={(e) => updateFieldValue(index, 'field2', e.target.value)}
+                  className="w-full p-2"
                   readOnly
                 />
               </td>
