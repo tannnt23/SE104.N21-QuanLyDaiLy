@@ -4,6 +4,7 @@ import MenuItem from "../../component/menu/menuItem/MenuItem";
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import DisplaySettingsOutlinedIcon from '@mui/icons-material/DisplaySettingsOutlined';
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
 function ThayDoiQuyDinh() {
 
@@ -27,6 +28,13 @@ function ThayDoiQuyDinh() {
             link: 'tham-so'
 
         },
+        {
+            id: 4,
+            label: "Mặt hàng",
+            icon: <Inventory2OutlinedIcon fontSize="large" />,
+            link: 'mat-hang'
+
+        },
 
     ];
 
@@ -39,7 +47,7 @@ function ThayDoiQuyDinh() {
             </div>
             {/* Form */}
             <div>
-                <div className=" grid grid-cols-3 gap-6 mx-10">
+                <div className=" grid grid-cols-2 gap-6 mx-10">
                     {menuItemContents.map((menuItemContent) => (
                         <MenuItem
                             key={menuItemContent.id}

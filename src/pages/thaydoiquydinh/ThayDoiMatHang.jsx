@@ -3,30 +3,32 @@ import Error from '../../component/pop_up/Error'
 import Success from '../../component/pop_up/Success'
 import { compareArrays } from '../../utils/utils'
 
-import { queryEveryLoaidaily, queryThamSo } from "../../graphql/queries";
-import { updateLoaidailyMutation, addLoaidailyMutation, deleteLoaidailyMutation } from "../../graphql/mutations";
+import { queryEveryMathang, queryThamSo, queryEveryDvt } from "../../graphql/queries";
+import { addMathangMutation, updateMathangMutation, deleteMathangMutation } from "../../graphql/mutations";
 import { useConfirm } from 'material-ui-confirm'
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 
-function ThayDoiLoaiDaiLy() {
+function ThayDoiMatHang() {
 
     const [showError, setShowError] = useState(null);
     const [showSuccess, setShowSuccess] = useState(null);
-    const [editingAgencyId, setEditingAgencyId] = useState(null);
-    const [daiLy, setDaiLy] = useState(null);
+    const [editingProductId, setEditingProductId] = useState(null);
+    const [product, setProduct] = useState(null);
 
-    const { loading, error, data } = useQuery(queryEveryLoaidaily)
+    const { loading, error, data } = useQuery(queryEveryMathang)
+    const queryDVT = useQuery(queryEveryDvt)
     const [queryFunc, thamso] = useLazyQuery(queryThamSo)
-    const [updateFunc] = useMutation(updateLoaidailyMutation)
-    const [addFunc] = useMutation(addLoaidailyMutation)
-    const [deleteFunc] = useMutation(deleteLoaidailyMutation)
+    const [updateFunc] = useMutation(updateMathangMutation)
+    const [addFunc] = useMutation(addMathangMutation)
+    const [deleteFunc] = useMutation(deleteMathangMutation)
     const confirm = useConfirm()
 
     useEffect(() => {
-        if (data) setDaiLy([...data.everyLoaidaily])
+        if (data) setProduct([...data.everyMathang])
+        if (queryDVT.data) console.log(queryDVT.data)
         if (!thamso.data) queryFunc()
-    }, [data])
+    }, [data, queryDVT.data])
 
     if (loading) return <div>Loading...</div>;
     if (error) setShowError(error)
@@ -34,42 +36,42 @@ function ThayDoiLoaiDaiLy() {
     const handleDelete = (id) => {
         setShowError(null)
         setShowSuccess(null)
-        setDaiLy(daiLy.filter((agency) => agency.MaLoaiDaiLy !== id));
+        setProduct(product.filter((agency) => agency.MaMatHang !== id));
     };
 
     const handleEdit = (id) => {
         setShowError(null)
         setShowSuccess(null)
-        setEditingAgencyId(id);
+        setEditingProductId(id);
     };
 
     const handleSave = (id) => {
-        setEditingAgencyId(null);
+        setEditingProductId(null);
         console.log(`Save changes for agency with ID ${id}`);
     };
 
     const handleAdd = () => {
         setShowError(null)
         setShowSuccess(null)
-        const numDVT = thamso.data.thamso.SoLuongLoaiDaiLy
+        const numDVT = thamso.data.thamso.SoLuongMatHang
 
-        if (daiLy.length >= numDVT) {
-            setShowError({ message: "Số lượng DL đã đạt tối đa" })
+        if (product.length >= numDVT) {
+            setShowError({ message: "Số lượng MH đã đạt tối đa" })
             return
         }
 
         const newAgencyId = (new Date()).getTime();
 
-        setDaiLy([
-            ...daiLy,
-            { MaLoaiDaiLy: newAgencyId, TenLoaiDaiLy: '', SoNoToiDa: 0 }
+        setProduct([
+            ...product,
+            { MaMatHang: newAgencyId, TenMatHang: '', SoLuongTon: 0, MaDVT: "1" }
         ]);
     };
 
     const handleSubmit = () => {
         confirm({ description: "Xác nhận lưu thay đổi?" })
             .then(async () => {
-                const { added, deleted, updated } = compareArrays(data.everyLoaidaily, daiLy, 'MaLoaiDaiLy');
+                const { added, deleted, updated } = compareArrays(data.everyMathang, product, 'MaMatHang');
                 console.log({ added, deleted, updated })
 
                 for (let i = 0; i < added.length; i++) {
@@ -101,7 +103,7 @@ function ThayDoiLoaiDaiLy() {
                             console.log(data)
                         })
                         .catch(err => {
-                            setDaiLy([...data.everyLoaidaily])
+                            setProduct([...data.everyMathang])
 
                             if (err.name != 'ApolloError') setShowError(err)
                             else setShowError({ message: "Xóa không thành công vì vi phạm ràng buộc khóa ngoại." })
@@ -111,7 +113,7 @@ function ThayDoiLoaiDaiLy() {
             .catch(() => {
                 console.log('cancel')
             })
-        console.log(daiLy)
+        console.log(product)
     }
 
     return (
@@ -129,24 +131,25 @@ function ThayDoiLoaiDaiLy() {
                     <table className="w-1/2 mb-4">
                         <thead>
                             <tr>
-                                <th className="border px-4 py-2">Tên loại đại lý</th>
-                                <th className="border px-4 py-2">Số nợ tối đa</th>
-                                <th className="border px-4 py-2">Hành động</th>
+                                <th className="border px-4 py-2">Tên mặt hàng</th>
+                                <th className="border px-4 py-2">Số lượng tồn</th>
+                                <th className="border px-4 py-2">Đơn giá nhập</th>
+                                <th className="border px-4 py-2">Đơn vị tính</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {daiLy && daiLy.map((agency) => (
-                                <tr key={agency.MaLoaiDaiLy}>
+                            {product && product.map((agency) => (
+                                <tr key={agency.MaMatHang}>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
+                                        {editingProductId === agency.MaMatHang ? (
                                             <input
                                                 type="text"
-                                                value={agency.TenLoaiDaiLy}
+                                                value={agency.TenMatHang}
                                                 onChange={(e) =>
-                                                    setDaiLy((prevAgencies) =>
+                                                    setProduct((prevAgencies) =>
                                                         prevAgencies.map((prevAgency) =>
-                                                            prevAgency.MaLoaiDaiLy === agency.MaLoaiDaiLy
-                                                                ? { ...prevAgency, TenLoaiDaiLy: e.target.value }
+                                                            prevAgency.MaMatHang === agency.MaMatHang
+                                                                ? { ...prevAgency, TenMatHang: e.target.value }
                                                                 : prevAgency
                                                         )
                                                     )
@@ -154,21 +157,21 @@ function ThayDoiLoaiDaiLy() {
                                                 className="border border-gray-300 p-2"
                                             />
                                         ) : (
-                                            agency.TenLoaiDaiLy
+                                            agency.TenMatHang
                                         )}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
+                                        {editingProductId === agency.MaMatHang ? (
                                             <input
                                                 type="number"
-                                                value={agency.SoNoToiDa}
+                                                value={agency.SoLuongTon}
                                                 onChange={(e) =>
-                                                    setDaiLy((prevAgencies) =>
+                                                    setProduct((prevAgencies) =>
                                                         prevAgencies.map((prevAgency) =>
-                                                            prevAgency.MaLoaiDaiLy === agency.MaLoaiDaiLy
+                                                            prevAgency.MaMatHang === agency.MaMatHang
                                                                 ? {
                                                                     ...prevAgency,
-                                                                    SoNoToiDa: e.target.value == '' ? '' : parseInt(e.target.value)
+                                                                    SoLuongTon: e.target.value == '' ? '' : parseInt(e.target.value)
                                                                 }
                                                                 : prevAgency
                                                         )
@@ -177,14 +180,60 @@ function ThayDoiLoaiDaiLy() {
                                                 className="border border-gray-300 p-2"
                                             />
                                         ) : (
-                                            agency.SoNoToiDa
+                                            agency.SoLuongTon
                                         )}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
+                                        {editingProductId === agency.MaMatHang ? (
+                                            <input
+                                                type="number"
+                                                value={agency.DonGiaNhap}
+                                                onChange={(e) =>
+                                                    setProduct((prevAgencies) =>
+                                                        prevAgencies.map((prevAgency) =>
+                                                            prevAgency.MaMatHang === agency.MaMatHang
+                                                                ? {
+                                                                    ...prevAgency,
+                                                                    DonGiaNhap: e.target.value != '' ? parseInt(e.target.value) : ''
+                                                                }
+                                                                : prevAgency
+                                                        )
+                                                    )
+                                                }
+                                                className="border border-gray-300 p-2"
+                                            />
+                                        ) : (
+                                            agency.DonGiaNhap
+                                        )}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        {editingProductId === agency.MaMatHang ? (
+                                            <input
+                                                type="number"
+                                                value={agency.MaDVT}
+                                                onChange={(e) =>
+                                                    setProduct((prevAgencies) =>
+                                                        prevAgencies.map((prevAgency) =>
+                                                            prevAgency.MaMatHang === agency.MaMatHang
+                                                                ? {
+                                                                    ...prevAgency,
+                                                                    MaDVT: e.target.value
+                                                                }
+                                                                : prevAgency
+                                                        )
+                                                    )
+                                                }
+                                                className="border border-gray-300 p-2"
+                                            />
+                                        ) : (
+                                            queryDVT?.data?.everyDvt.find((obj)=> obj.MaDVT == agency.MaDVT)?.TenDVT
+                                        )}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        {editingProductId === agency.MaMatHang ? (
                                             <button
                                                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                                                onClick={() => handleSave(agency.MaLoaiDaiLy)}
+                                                onClick={() => handleSave(agency.MaMatHang)}
                                             >
                                                 Lưu
                                             </button>
@@ -192,13 +241,13 @@ function ThayDoiLoaiDaiLy() {
                                             <>
                                                 <button
                                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                                    onClick={() => handleEdit(agency.MaLoaiDaiLy)}
+                                                    onClick={() => handleEdit(agency.MaMatHang)}
                                                 >
                                                     Sửa
                                                 </button>
                                                 <button
                                                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                                    onClick={() => handleDelete(agency.MaLoaiDaiLy)}
+                                                    onClick={() => handleDelete(agency.MaMatHang)}
                                                 >
                                                     Xóa
                                                 </button>
@@ -214,7 +263,7 @@ function ThayDoiLoaiDaiLy() {
                         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         onClick={handleAdd}
                     >
-                        Thêm loại đại lý
+                        Thêm mặt hàng
                     </button>
                     <button
                         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -228,4 +277,4 @@ function ThayDoiLoaiDaiLy() {
     )
 }
 
-export default ThayDoiLoaiDaiLy
+export default ThayDoiMatHang

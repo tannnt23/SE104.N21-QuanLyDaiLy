@@ -21,10 +21,7 @@ function LapPhieuThuTien() {
     const [showSuccess, setShowSuccess] = useState(null);
 
     useEffect(() => {
-        if (data) {
-            // console.log(data)
-            setDaiLy(data.everyDaily);
-        }
+        if (data) setDaiLy(data.everyDaily);
 
         if (addDataReturn.error) setShowError(addDataReturn.error)
         if (updateDataReturn.error) setShowError(updateDataReturn.error)
