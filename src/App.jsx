@@ -16,28 +16,31 @@ import NotFoundPage from "./pages/404_not_found/NotFound";
 
 // import packages
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ConfirmProvider } from "material-ui-confirm";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/lap-phieu-xuat-hang" element={<LapPhieuXuatHang />} />
-            <Route path="/lap-phieu-thu-tien" element={<LapPhieuThuTien />} />
-            <Route path="/bao-cao-cong-no" element={<BaoCaoCongNo />} />
-            <Route path="/bao-cao-doanh-thu" element={<BaoCaoDoanhThu />} />
-            <Route path="/dang-ky-dai-ly" element={<DangKyDaiLy />} />
-            <Route path="/tra-cuu-dai-ly" element={<TraCuuDaiLy />} />
-            <Route path="/thay-doi-quy-dinh" element={<ThayDoiQuyDinh />} />
-            <Route path="/thay-doi-quy-dinh/loai-dai-ly" element={<ThayDoiLoaiDaiLy />} />
-            <Route path="/thay-doi-quy-dinh/don-vi-tinh" element={<ThayDoiDonVi />} />
-            <Route path="/thay-doi-quy-dinh/tham-so" element={<ThayDoiThamSo />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <ConfirmProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/lap-phieu-xuat-hang" element={<LapPhieuXuatHang />} />
+              <Route path="/lap-phieu-thu-tien" element={<LapPhieuThuTien />} />
+              <Route path="/bao-cao-cong-no" element={<BaoCaoCongNo />} />
+              <Route path="/bao-cao-doanh-thu" element={<BaoCaoDoanhThu />} />
+              <Route path="/dang-ky-dai-ly" element={<DangKyDaiLy />} />
+              <Route path="/tra-cuu-dai-ly" element={<TraCuuDaiLy />} />
+              <Route path="/thay-doi-quy-dinh" element={<ThayDoiQuyDinh />} />
+              <Route path="/thay-doi-quy-dinh/loai-dai-ly" element={<ThayDoiLoaiDaiLy />} />
+              <Route path="/thay-doi-quy-dinh/don-vi-tinh" element={<ThayDoiDonVi />} />
+              <Route path="/thay-doi-quy-dinh/tham-so" element={<ThayDoiThamSo />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </ConfirmProvider>
     </div>
   );
 }

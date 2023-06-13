@@ -1,42 +1,128 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import React, { useState } from "react";
-import { useQuery, useMutation } from '@apollo/client'
+import Error from '../../component/pop_up/Error'
+import Success from '../../component/pop_up/Success'
 import { queryThamSo } from "../../graphql/queries";
 import { updateThamsoMutation } from "../../graphql/mutations";
 
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from '@apollo/client'
+
+
 function ThayDoiThamSo() {
-    const { loading, error, data, refetch } = useQuery(queryThamSo);
-    const [doUpdateThamSo, { loading: updateLoading, error: updateError }] =
-        useMutation(updateThamsoMutation);
-    const [maxAgents, setMaxAgents] = useState('');
-    const [allowOverdue, setAllowOverdue] = useState('true');
-    const [unitPrice, setUnitPrice] = useState('');
 
-    console.log(data);
-    const thamSo = data.thamso
+    const [thamSo, setThamSo] = useState(null)
+    const [showError, setShowError] = useState(null);
+    const [showSuccess, setShowSuccess] = useState(null);
 
-    const handleSubmit = (e) => {
+    const { loading, error, data } = useQuery(queryThamSo)
+    const [updateFunc] = useMutation(updateThamsoMutation)
+
+    useEffect(() => {
+        if (data) {
+
+        }
+    }, [data, thamSo])
+
+    if (loading) return <div>Loading...</div>;
+    if (error) setShowError(error)
+
+    const handleTSSLLDL = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            SoLuongLoaiDaiLy: e.target.value
+        })
+        )
+    }
+
+    const handleTS_SLLDLTQ = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            SoDaiLyToiDaTrongQuan: e.target.value
+        })
+        )
+    }
+
+    const handleTS_SLMH = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            SoLuongMatHang: e.target.value
+        })
+        )
+    }
+
+    const handleTS_SLDVT = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            SoLuongDVT: e.target.value
+        })
+        )
+    }
+
+    const handleTS_STKVQN = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            SoTienThuKhongVuotQuaSoTienDaiLyDangNo: JSON.parse(e.target.value) ? 1 : 0
+        })
+        )
+    }
+
+    const handleTS_TLDGX = (e) => {
+        setShowError(null)
+        setShowSuccess(null)
+        setThamSo((prevState) => ({
+            ...prevState,
+            TyLeDonGiaXuat: e.target.value
+        })
+        )
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Xử lý logic khi submit form
-        console.log('Max Agents:', maxAgents);
-        console.log('Allow Overdue:', allowOverdue);
-        console.log('Unit Price:', unitPrice);
+        if (!thamSo) return
 
-        // Reset giá trị của các input sau khi submit
-        setMaxAgents('');
-        setAllowOverdue('true');
-        setUnitPrice('');
+        let thamso = Object.fromEntries(
+            Object.entries(thamSo).filter(([key, value]) => value !== '')
+        );
+
+        thamso = {
+            ...data.thamso, ...thamso
+        }
+
+        try {
+            const thamsoreturn = await updateFunc({
+                variables: {
+                    soDaiLyToiDaTrongQuan: thamso.SoDaiLyToiDaTrongQuan,
+                    soLuongDVT: thamso.SoLuongDVT,
+                    soLuongLoaiDaiLy: thamso.SoLuongLoaiDaiLy,
+                    soLuongMatHang: thamso.SoLuongMatHang,
+                    soTienThuKhongVuotQuaSoTienDaiLyDangNo: thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo,
+                    tyLeDonGiaXuat: parseFloat(thamso.TyLeDonGiaXuat)
+                }
+            })
+
+            setThamSo(thamsoreturn.data.updateThamso)
+            setShowSuccess(true)
+        }
+        catch (err) {
+            setShowError(err)
+        }
     };
-
-
-
-    if (loading && updateLoading) return 'Loading...';
-
-    if (error && updateError) return `Error! ${error.message} || ${updateError.message}`;
 
     return (
         <div>
+            {showError && <Error error={showError} />}
+            {showSuccess && <Success show={showSuccess} />}
             {/* Heading */}
             <div className="flex justify-center items-center mb-5">
                 <BackButton className="mr-4" />
@@ -51,8 +137,9 @@ function ThayDoiThamSo() {
                             type="number"
                             id="max-agents"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.SoLuongLoaiDaiLy}
-                            onChange={(e) => setMaxAgents(e.target.value)}
+                            value={thamSo?.SoLuongLoaiDaiLy || ''}
+                            placeholder={data?.thamso?.SoLuongLoaiDaiLy}
+                            onChange={handleTSSLLDL}
                         />
                     </div>
                     <div className="mb-4 flex items-center">
@@ -61,8 +148,9 @@ function ThayDoiThamSo() {
                             type="number"
                             id="max-agents"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.SoDaiLyToiDaTrongQuan}
-                            onChange={(e) => setMaxAgents(e.target.value)}
+                            value={thamSo?.SoDaiLyToiDaTrongQuan || ''}
+                            placeholder={data?.thamso?.SoDaiLyToiDaTrongQuan}
+                            onChange={handleTS_SLLDLTQ}
                         />
                     </div>
                     <div className="mb-4 flex items-center">
@@ -71,8 +159,9 @@ function ThayDoiThamSo() {
                             type="number"
                             id="max-agents"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.SoLuongMatHang}
-                            onChange={(e) => setMaxAgents(e.target.value)}
+                            value={thamSo?.SoLuongMatHang || ''}
+                            placeholder={data?.thamso?.SoLuongMatHang}
+                            onChange={handleTS_SLMH}
                         />
                     </div>
                     <div className="mb-4 flex items-center">
@@ -81,8 +170,9 @@ function ThayDoiThamSo() {
                             type="number"
                             id="max-agents"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.SoLuongDVT}
-                            onChange={(e) => setMaxAgents(e.target.value)}
+                            value={thamSo?.SoLuongDVT || ''}
+                            placeholder={data?.thamso?.SoLuongDVT}
+                            onChange={handleTS_SLDVT}
                         />
                     </div>
                     <div className="mb-4 flex items-center">
@@ -90,11 +180,12 @@ function ThayDoiThamSo() {
                         <select
                             id="allow-overdue"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.SoTienThuKhongVuotQuaSoTienDaiLyDangNo ? "True" : "False"}
-                            onChange={(e) => setAllowOverdue(e.target.value)}
+                            value={thamSo?.SoTienThuKhongVuotQuaSoTienDaiLyDangNo ? "true" : "false"}
+                            placeholder={data?.thamso?.SoTienThuKhongVuotQuaSoTienDaiLyDangNo ? "True" : "False"}
+                            onChange={handleTS_STKVQN}
                         >
-                            <option value="True">True</option>
-                            <option value="False">False</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
                         </select>
                     </div>
                     <div className="mb-4 flex items-center">
@@ -103,8 +194,9 @@ function ThayDoiThamSo() {
                             type="number"
                             id="unit-price"
                             className="border border-gray-300 p-2 flex-grow"
-                            value={thamSo.TyLeDonGiaXuat}
-                            onChange={(e) => setUnitPrice(e.target.value)}
+                            value={thamSo?.TyLeDonGiaXuat || ''}
+                            placeholder={data?.thamso?.TyLeDonGiaXuat}
+                            onChange={handleTS_TLDGX}
                         />
                     </div>
                     <div className="flex justify-end">

@@ -1,41 +1,143 @@
 import BackButton from "../../component/button/backbutton/BackButton";
-import React, { useState } from "react";
+import Error from '../../component/pop_up/Error'
+import Success from '../../component/pop_up/Success'
+
+import { queryEveryLoaidaily, queryThamSo } from "../../graphql/queries";
+import { updateLoaidailyMutation, addLoaidailyMutation, deleteLoaidailyMutation } from "../../graphql/mutations";
+import { useConfirm } from 'material-ui-confirm'
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+
+const compareArrays = (arr1, arr2) => {
+    const added = arr2.filter(item2 => !arr1.find(item1 => item1.MaLoaiDaiLy === item2.MaLoaiDaiLy));
+    const deleted = arr1.filter(item1 => !arr2.find(item2 => item2.MaLoaiDaiLy === item1.MaLoaiDaiLy));
+    const updated = arr2.filter(item2 => {
+        const matchedItem = arr1.find(item1 => item1.MaLoaiDaiLy === item2.MaLoaiDaiLy);
+        return matchedItem && !compareObjects(matchedItem, item2);
+    });
+
+    return { added, deleted, updated };
+}
+
+const compareObjects = (obj1, obj2) => {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (let key of keys1) {
+        if (obj1[key] !== obj2[key]) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 function ThayDoiLoaiDaiLy() {
 
-    const [agencies, setAgencies] = useState([
-        { id: 1, name: 'Đại lý A', maxDebt: 1000000 },
-        { id: 2, name: 'Đại lý B', maxDebt: 2000000 },
-        { id: 3, name: 'Đại lý C', maxDebt: 1500000 },
-    ]);
-
+    const [showError, setShowError] = useState(null);
+    const [showSuccess, setShowSuccess] = useState(null);
     const [editingAgencyId, setEditingAgencyId] = useState(null);
+    const [daiLy, setDaiLy] = useState(null);
+
+    const { loading, error, data } = useQuery(queryEveryLoaidaily)
+    const [queryFunc, thamso] = useLazyQuery(queryThamSo)
+    const [updateFunc] = useMutation(updateLoaidailyMutation)
+    const [addFunc] = useMutation(addLoaidailyMutation)
+    const [deleteFunc] = useMutation(deleteLoaidailyMutation)
+    const confirm = useConfirm()
+
+    useEffect(() => {
+        if (data) setDaiLy([...data.everyLoaidaily])
+        if (!thamso.data) queryFunc()
+    }, [data])
+
+    if (loading) return <div>Loading...</div>;
+    if (error) setShowError(error)
 
     const handleDelete = (id) => {
-        setAgencies(agencies.filter((agency) => agency.id !== id));
+        setDaiLy(daiLy.filter((agency) => agency.MaLoaiDaiLy !== id));
     };
 
     const handleEdit = (id) => {
+        setShowError(null)
         setEditingAgencyId(id);
     };
 
     const handleSave = (id) => {
         setEditingAgencyId(null);
-        // Lưu thông tin chỉnh sửa của đại lý
+
         console.log(`Save changes for agency with ID ${id}`);
     };
 
     const handleAdd = () => {
-        const newAgencyId = agencies.length + 1;
-        setAgencies([
-            ...agencies,
-            { id: newAgencyId, name: '', maxDebt: 0 }
+        const numDVT = thamso.data.thamso.SoLuongDVT
+
+        if (daiLy.length >= numDVT) {
+            setShowError({ message: "Số lượng DVT đã đạt tối đa" })
+            return
+        }
+
+        const newAgencyId = (new Date()).getTime();
+
+        setDaiLy([
+            ...daiLy,
+            { MaLoaiDaiLy: newAgencyId, TenLoaiDaiLy: '', SoNoToiDa: 0 }
         ]);
-        setEditingAgencyId(newAgencyId);
     };
+
+    const handleSubmit = () => {
+        confirm({ description: "Xác nhận lưu thay đổi?" })
+            .then(async () => {
+                const { added, deleted, updated } = compareArrays(data.everyLoaidaily, daiLy);
+                console.log({added, deleted, updated})
+
+                for (let i = 0; i < added.length; i++) {
+                    addFunc({variables : added[i]})
+                    .then((data)=>{
+                        setShowSuccess(true)
+                        console.log(data)
+                    })
+                    .catch(err => {
+                        setShowError(err)
+                    })
+                }
+
+                for (let i = 0; i < updated.length; i++) {
+                    updateFunc({variables : updated[i]})
+                    .then((data)=>{
+                        setShowSuccess(true)
+                        console.log(data)
+                    })
+                    .catch(err => {
+                        setShowError(err)
+                    })
+                }
+
+                for (let i = 0; i < deleted.length; i++) {
+                    deleteFunc({variables : deleted[i]})
+                    .then((data)=>{
+                        setShowSuccess(true)
+                        console.log(data)
+                    })
+                    .catch(err => {
+                        setShowError(err)
+                    })
+                }
+            })
+            .catch(() => {
+                console.log('cancel')
+            })
+        console.log(daiLy)
+    }
 
     return (
         <div>
+            {showError && <Error error={showError} />}
+            {showSuccess && <Success show={showSuccess} />}
             {/* Heading */}
             <div className="flex justify-center items-center mb-5">
                 <BackButton className="mr-4" />
@@ -53,18 +155,18 @@ function ThayDoiLoaiDaiLy() {
                             </tr>
                         </thead>
                         <tbody>
-                            {agencies.map((agency) => (
-                                <tr key={agency.id}>
+                            {daiLy && daiLy.map((agency) => (
+                                <tr key={agency.MaLoaiDaiLy}>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.id ? (
+                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
                                             <input
                                                 type="text"
-                                                value={agency.name}
+                                                value={agency.TenLoaiDaiLy}
                                                 onChange={(e) =>
-                                                    setAgencies((prevAgencies) =>
+                                                    setDaiLy((prevAgencies) =>
                                                         prevAgencies.map((prevAgency) =>
-                                                            prevAgency.id === agency.id
-                                                                ? { ...prevAgency, name: e.target.value }
+                                                            prevAgency.MaLoaiDaiLy === agency.MaLoaiDaiLy
+                                                                ? { ...prevAgency, TenLoaiDaiLy: e.target.value }
                                                                 : prevAgency
                                                         )
                                                     )
@@ -72,19 +174,22 @@ function ThayDoiLoaiDaiLy() {
                                                 className="border border-gray-300 p-2"
                                             />
                                         ) : (
-                                            agency.name
+                                            agency.TenLoaiDaiLy
                                         )}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.id ? (
+                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
                                             <input
                                                 type="number"
-                                                value={agency.maxDebt}
+                                                value={agency.SoNoToiDa}
                                                 onChange={(e) =>
-                                                    setAgencies((prevAgencies) =>
+                                                    setDaiLy((prevAgencies) =>
                                                         prevAgencies.map((prevAgency) =>
-                                                            prevAgency.id === agency.id
-                                                                ? { ...prevAgency, maxDebt: parseInt(e.target.value) }
+                                                            prevAgency.MaLoaiDaiLy === agency.MaLoaiDaiLy
+                                                                ? {
+                                                                    ...prevAgency,
+                                                                    SoNoToiDa: e.target.value == '' ? '' : parseInt(e.target.value)
+                                                                }
                                                                 : prevAgency
                                                         )
                                                     )
@@ -92,14 +197,14 @@ function ThayDoiLoaiDaiLy() {
                                                 className="border border-gray-300 p-2"
                                             />
                                         ) : (
-                                            agency.maxDebt
+                                            agency.SoNoToiDa
                                         )}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {editingAgencyId === agency.id ? (
+                                        {editingAgencyId === agency.MaLoaiDaiLy ? (
                                             <button
                                                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                                                onClick={() => handleSave(agency.id)}
+                                                onClick={() => handleSave(agency.MaLoaiDaiLy)}
                                             >
                                                 Lưu
                                             </button>
@@ -107,13 +212,13 @@ function ThayDoiLoaiDaiLy() {
                                             <>
                                                 <button
                                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                                    onClick={() => handleEdit(agency.id)}
+                                                    onClick={() => handleEdit(agency.MaLoaiDaiLy)}
                                                 >
                                                     Sửa
                                                 </button>
                                                 <button
                                                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                                    onClick={() => handleDelete(agency.id)}
+                                                    onClick={() => handleDelete(agency.MaLoaiDaiLy)}
                                                 >
                                                     Xóa
                                                 </button>
@@ -126,11 +231,17 @@ function ThayDoiLoaiDaiLy() {
                         </tbody>
                     </table>
                     <button
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={handleAdd}
-                        >
-                            Thêm loại đại lý
-                        </button>
+                        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={handleAdd}
+                    >
+                        Thêm loại đại lý
+                    </button>
+                    <button
+                        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={handleSubmit}
+                    >
+                        Submit
+                    </button>
                 </div>
             </div>
         </div>
