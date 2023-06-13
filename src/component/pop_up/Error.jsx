@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const Error = (prop) => {
   const [showError, setShowError] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     setShowError(Boolean(prop.error));
-    console.log(Boolean(prop.error))
-  },[prop])
+    console.log(Boolean(prop.error));
+  }, [prop]);
 
   const handleCloseError = () => {
     setShowError(false);
