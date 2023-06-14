@@ -1,58 +1,133 @@
 import BackButton from "../../component/button/backbutton/BackButton";
 import Error from "../../component/pop_up/Error";
 
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import {
   queryEveryDaily,
-  queryCt_bcdsByTenDLAndThang,
+  queryEveryCT_BCDSByMaBCDS,
+  queryEveryBaocaodoanhso,
 } from "../../graphql/queries";
+import {
+  addBaocaodoanhsoMutation,
+  addCt_bcdsMutation,
+  calculateTyle,
+} from "../../graphql/mutations";
 import { useState, useEffect } from "react";
 
 function BaoCaoDoanhThu() {
-  const [daiLy, setDaiLy] = useState([]);
-  const [name, setName] = useState("option 0");
   const [date, setDate] = useState("");
   const [tableData, setTableData] = useState(null);
   const [showError, setShowError] = useState(null);
 
   const { loading, error, data } = useQuery(queryEveryDaily);
-  const [queryFunc, dataQuery] = useLazyQuery(queryCt_bcdsByTenDLAndThang);
-
-  useEffect(() => {
-    if (data) setDaiLy(data.everyDaily);
-
-    if (dataQuery.data) setTableData(dataQuery.data.ct_bcdsByTenDLAndThang[0]);
-    else setShowError(dataQuery.error);
-  }, [data, dataQuery, showError]);
+  const [queryEvCT_BCDSFunc, bcdsThang] = useLazyQuery(
+    queryEveryCT_BCDSByMaBCDS
+  );
+  const [queryEvBCDSFunc] = useLazyQuery(queryEveryBaocaodoanhso);
+  const [addBCDSFunc] = useMutation(addBaocaodoanhsoMutation);
+  const [addCT_BCDSFunc] = useMutation(addCt_bcdsMutation);
+  const [calculate] = useMutation(calculateTyle);
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
-
-  const handleNameChange = (event) => {
-    setShowError(null);
-    setName(event.target.value);
-  };
 
   const handleDateChange = (event) => {
     setShowError(null);
     setDate(event.target.value);
   };
 
+  const getCT_BCDSById = async (msBCDS) => {
+    try {
+      const res = await queryEvCT_BCDSFunc({
+        variables: {
+          maBaoCaoDoanhSo: msBCDS,
+        },
+      });
+
+      const listCT_BCDS = res.data?.everyCT_BCDSByMaBCDS;
+      setTableData(listCT_BCDS);
+    } catch (err) {
+      setShowError(err);
+    }
+  };
+
+  const ifNotCreated = async (date) => {
+    const listDaiLy = data?.everyDaily;
+
+    try {
+      const BCDS = await addBCDSFunc({
+        variables: {
+          thang: date,
+        },
+      });
+
+      const maBCDS = BCDS.data?.addBaocaodoanhso?.MaBaoCaoDoanhSo;
+
+      if (!data) throw Error("Lỗi khi tải dữ liệu!");
+
+      await Promise.all(
+        listDaiLy.map((daily) =>
+          addCT_BCDSFunc({
+            variables: {
+              maBaoCaoDoanhSo: maBCDS,
+              maDaiLy: daily.MaDaiLy,
+            },
+          })
+        )
+      );
+
+      await calculate({variables : {
+        maBaoCaoDoanhSo: maBCDS
+      }});
+
+      return maBCDS
+    } catch (err) {
+      setShowError(err);
+    }
+  };
+
+  const checkIsCreated = async (date) => {
+    const msBCDSCreated = await queryEvBCDSFunc();
+    const listMS = msBCDSCreated.data?.everyBaocaodoanhso;
+
+    return listMS.find((bcds) => bcds?.Thang == date)?.MaBaoCaoDoanhSo;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let option = parseInt(name.split(" ")[1]);
-    let date_ = [date.split("-")[0], date.split("-")[1]].join("-");
+    const date_ = [date.split("-")[0], date.split("-")[1]].join("-");
+    const msBCDS = await checkIsCreated(date_);
 
-    await queryFunc({
-      variables: {
-        tenDaiLy: daiLy[option].TenDaiLy,
-        thang: date_,
-      },
-    });
+    if (msBCDS) getCT_BCDSById(msBCDS);
+    else {
+      const maBCDS = await ifNotCreated(date_)
+      getCT_BCDSById(maBCDS)
+    };
   };
 
-  const createTable = () => (
+  const CreateRow = ({ rowData }) => {
+    return (
+      <tr>
+        <td className="border border-gray-300 px-4 py-2">
+          {rowData?.relatedDaily?.TenDaiLy}
+        </td>
+        <td className="border border-gray-300 px-4 py-2">
+          {rowData?.SoPhieuXuat}
+        </td>
+        <td className="border border-gray-300 px-4 py-2">
+          {rowData?.TongTriGia}
+        </td>
+        <td className="border border-gray-300 px-4 py-2">{rowData?.TyLe}</td>
+      </tr>
+    );
+  };
+
+  const createTable = (date, tableData) => {
+    let data = [...tableData]
+    data.sort((a, b) => b.TongTriGia - a.TongTriGia)
+
+    return (
     <div className="mt-4 mx-auto">
       <h2 className="text-center text-xl mb-2">
         Báo cáo doanh thu tháng {date.split("-")[1]} năm {date.split("-")[0]}
@@ -67,20 +142,10 @@ function BaoCaoDoanhThu() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border border-gray-300 px-4 py-2">
-              {tableData?.relatedDaily?.TenDaiLy}
-            </td>
-            <td className="border border-gray-300 px-4 py-2">
-              {tableData.SoPhieuXuat}
-            </td>
-            <td className="border border-gray-300 px-4 py-2">
-              {tableData.TongTriGia}
-            </td>
-            <td className="border border-gray-300 px-4 py-2">
-              {tableData.TyLe}
-            </td>
-          </tr>
+          {data &&
+            data.map((row) => (
+              <CreateRow rowData={row} key={row?.MaCT_BCDS} />
+            ))}
         </tbody>
         <tfoot>
           <tr>
@@ -88,13 +153,17 @@ function BaoCaoDoanhThu() {
               className="border border-gray-300 px-4 py-2 font-bold text-right"
               colSpan="4"
             >
-              Tổng số doanh thu: {1800}
+              Tổng số doanh thu:{" "}
+              {tableData.reduce(
+                (total, x) => total + parseFloat(x?.["TongTriGia"]),
+                0
+              )}
             </td>
           </tr>
         </tfoot>
       </table>
     </div>
-  );
+  )};
 
   return (
     <div>
@@ -109,21 +178,10 @@ function BaoCaoDoanhThu() {
       {/* Form */}
       <div>
         <form className="flex gap-4" onSubmit={handleSubmit}>
-          <select
-            value={name}
-            onChange={handleNameChange}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {daiLy.map((item, index) => (
-              <option key={index} value={`option ${index}`}>
-                {item.TenDaiLy}
-              </option>
-            ))}
-          </select>
           <input
             type="date"
-            placeholder="Ngày tháng"
             value={date}
+            required
             onChange={handleDateChange}
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -135,7 +193,7 @@ function BaoCaoDoanhThu() {
           </button>
         </form>
       </div>
-      {tableData && createTable(tableData)}
+      {tableData && createTable(date, tableData)}
     </div>
   );
 }
