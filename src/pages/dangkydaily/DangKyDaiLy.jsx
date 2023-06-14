@@ -82,6 +82,7 @@ const AddDailyForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-1/2">
+      <h1 className='text-4xl font-bold'>Đăng ký đại lý</h1>
       <div>
         <label htmlFor="TenDaiLy" className="block font-medium">
           Tên đại lý

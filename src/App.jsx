@@ -13,6 +13,7 @@ import ThayDoiLoaiDaiLy from "./pages/thaydoiquydinh/ThayDoiLoaiDaiLy";
 import ThayDoiDonVi from "./pages/thaydoiquydinh/ThayDoiDonVi";
 import ThayDoiThamSo from "./pages/thaydoiquydinh/ThayDoiThamSo";
 import ThayDoiMatHang from "./pages/thaydoiquydinh/ThayDoiMatHang";
+import PhieuNhapHang from "./pages/nhaphangvaokho/PhieuNhapHang";
 import NotFoundPage from "./pages/404_not_found/NotFound";
 
 // import packages
@@ -38,6 +39,7 @@ function App() {
               <Route path="/thay-doi-quy-dinh/don-vi-tinh" element={<ThayDoiDonVi />} />
               <Route path="/thay-doi-quy-dinh/tham-so" element={<ThayDoiThamSo />} />
               <Route path="/thay-doi-quy-dinh/mat-hang" element={<ThayDoiMatHang />} />
+              <Route path="/nhap-hang-vao-kho" element={<PhieuNhapHang />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
