@@ -16,9 +16,8 @@ function ThayDoiThamSo() {
   const [updateFunc] = useMutation(updateThamsoMutation);
 
   useEffect(() => {
-    if (data) {
-    }
-  }, [data, thamSo]);
+    if (data) setThamSo({ ...data.thamso });
+  }, [data]);
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
@@ -93,24 +92,24 @@ function ThayDoiThamSo() {
       ...thamso,
     };
 
-    try {
-      const thamsoreturn = await updateFunc({
-        variables: {
-          soDaiLyToiDaTrongQuan: thamso.SoDaiLyToiDaTrongQuan,
-          soLuongDVT: thamso.SoLuongDVT,
-          soLuongLoaiDaiLy: thamso.SoLuongLoaiDaiLy,
-          soLuongMatHang: thamso.SoLuongMatHang,
-          soTienThuKhongVuotQuaSoTienDaiLyDangNo:
-            thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo,
-          tyLeDonGiaXuat: parseFloat(thamso.TyLeDonGiaXuat),
-        },
+    updateFunc({
+      variables: {
+        soDaiLyToiDaTrongQuan: parseInt(thamso.SoDaiLyToiDaTrongQuan),
+        soLuongDvt: parseInt(thamso.SoLuongDVT),
+        soLuongLoaiDaiLy: parseInt(thamso.SoLuongLoaiDaiLy),
+        soLuongMatHang: parseInt(thamso.SoLuongMatHang),
+        soTienThuKhongVuotQuaSoTienDaiLyDangNo:
+          parseInt(thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo),
+        tyLeDonGiaXuat: parseFloat(thamso.TyLeDonGiaXuat),
+      },
+    })
+      .then((thamsoreturn) => {
+        setThamSo(thamsoreturn.data.updateThamso);
+        setShowSuccess(true);
+      })
+      .catch((err) => {
+        setShowError(err);
       });
-
-      setThamSo(thamsoreturn.data.updateThamso);
-      setShowSuccess(true);
-    } catch (err) {
-      setShowError(err);
-    }
   };
 
   return (

@@ -22,9 +22,10 @@ function ThayDoiMatHang() {
   const [showSuccess, setShowSuccess] = useState(null);
   const [editingProductId, setEditingProductId] = useState(null);
   const [product, setProduct] = useState(null);
+  const [isNeedToFetch, setIsNeedToFetch] = useState(null);
 
-  const { loading, error, data } = useQuery(queryEveryMathang);
-  const queryDVT = useQuery(queryEveryDvt);
+  const { loading, error, data, refetch } = useQuery(queryEveryMathang);
+  const [queryDVT, dvt] = useLazyQuery(queryEveryDvt);
   const [queryFunc, thamso] = useLazyQuery(queryThamSo);
   const [updateFunc] = useMutation(updateMathangMutation);
   const [addFunc] = useMutation(addMathangMutation);
@@ -33,9 +34,16 @@ function ThayDoiMatHang() {
 
   useEffect(() => {
     if (data) setProduct([...data.everyMathang]);
-    if (queryDVT.data) console.log(queryDVT.data);
-    if (!thamso.data) queryFunc();
-  }, [data, queryDVT.data]);
+  }, [data]);
+
+  useEffect(()=>{
+    if (!isNeedToFetch){ 
+        thamso.refetch();
+        dvt.refetch();
+        refetch();
+        setIsNeedToFetch(true)
+    }
+  },[])
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
@@ -253,7 +261,7 @@ function ThayDoiMatHang() {
                           className="border border-gray-300 p-2"
                         />
                       ) : (
-                        queryDVT?.data?.everyDvt.find(
+                        dvt?.data?.everyDvt.find(
                           (obj) => obj.MaDVT == agency.MaDVT
                         )?.TenDVT
                       )}

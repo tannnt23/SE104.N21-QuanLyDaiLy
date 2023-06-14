@@ -2,8 +2,8 @@ import BackButton from "../../component/button/backbutton/BackButton";
 import Error from "../../component/pop_up/Error";
 import Success from "../../component/pop_up/Success";
 
-import { useQuery, useMutation } from "@apollo/client";
-import { queryEveryDaily } from "../../graphql/queries";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { queryEveryDaily, queryThamSo } from "../../graphql/queries";
 import {
   updateDailyMutation,
   addPhieuthutienMutation,
@@ -11,24 +11,30 @@ import {
 import { useState, useEffect } from "react";
 
 function LapPhieuThuTien() {
-  const { loading, error, data } = useQuery(queryEveryDaily);
-  const [updateFunc, updateDataReturn] = useMutation(updateDailyMutation);
-  const [addFunc, addDataReturn] = useMutation(addPhieuthutienMutation);
+  const { loading, error, data, refetch} = useQuery(queryEveryDaily);
+  const [updateFunc] = useMutation(updateDailyMutation);
+  const [addFunc] = useMutation(addPhieuthutienMutation);
+  const [queryFunc, thamso] = useLazyQuery(queryThamSo);
 
-  const [daiLy, setDaiLy] = useState([]);
+  const [daiLy, setDaiLy] = useState(null);
   const [thuTien, setThuTien] = useState(0);
   const [showNo, setShowNo] = useState(false);
-  const [tienNo, setTienNo] = useState(0.0);
   const [daiLyDuocChon, setDaiLyDuocChon] = useState("option 0");
   const [showError, setShowError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(null);
+  const [isNeedToFetch, setIsNeedToFetch] = useState(null);
 
   useEffect(() => {
-    if (data) setDaiLy(data.everyDaily);
+    if (data) setDaiLy([...data.everyDaily]);
+  }, [data]);
 
-    if (addDataReturn.error) setShowError(addDataReturn.error);
-    if (updateDataReturn.error) setShowError(updateDataReturn.error);
-  }, [data, daiLy, updateDataReturn, addDataReturn]);
+  useEffect(()=>{
+    if (!isNeedToFetch){ 
+        thamso.refetch();
+        refetch();
+        setIsNeedToFetch(true)
+    }
+  },[])
 
   if (loading) return <div>Loading...</div>;
   if (error) return setShowError(error);
@@ -36,13 +42,15 @@ function LapPhieuThuTien() {
   const handleShowNo = (e) => {
     e.preventDefault();
 
+    setShowError(null);
+    setShowSuccess(null);
+
     let option = 0;
     let choosen = {};
 
     option = parseInt(daiLyDuocChon.split(" ")[1]);
-    choosen = daiLy[option];
+    choosen = daiLy?.[option];
 
-    setTienNo(parseFloat(choosen.TienNo));
     setShowNo(true);
   };
 
@@ -52,34 +60,50 @@ function LapPhieuThuTien() {
     setDaiLyDuocChon(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     let choosen = daiLy[parseInt(daiLyDuocChon.split(" ")[1])];
     let date = document.querySelector("#date-input").value;
 
-    if (thuTien > choosen.TienNo)
+    if (
+      thuTien > choosen.TienNo &&
+      !thamso.data.thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+    )
       setShowError({ message: "Tiền thu phải nhỏ hơn số tiền đại lý nợ" });
     else {
-      await addFunc({
+      addFunc({
         variables: {
           ngayThuTien: date,
           maDaiLy: choosen.MaDaiLy,
           soTienThu: parseFloat(thuTien),
         },
+      }).catch((err) => {
+        setShowError(err);
       });
-      await updateFunc({
+
+      updateFunc({
         variables: {
           ...choosen,
           TienNo: parseFloat(choosen.TienNo - thuTien),
         },
-      });
+      })
+        .then(() => {
+          setDaiLy((prev) =>
+            prev.map((daily) =>
+              daily.MaDaiLy == choosen.MaDaiLy
+                ? {
+                    ...daily,
+                    TienNo: parseFloat(choosen.TienNo - thuTien),
+                  }
+                : daily
+            )
+          );
 
-      setTimeout(() => {
-        if (!updateDataReturn.error) {
-          setTienNo(choosen.TienNo - thuTien);
           setShowSuccess(true);
-        }
-      }, 2000);
+        })
+        .catch((err) => {
+          setShowError(err);
+        });
     }
   };
 
@@ -109,11 +133,12 @@ function LapPhieuThuTien() {
                 value={daiLyDuocChon}
                 onChange={handleChonDaiLy}
               >
-                {daiLy.map((item, index) => (
-                  <option key={index} value={`option ${index}`}>
-                    {item.TenDaiLy}
-                  </option>
-                ))}
+                {daiLy &&
+                  daiLy.map((item, index) => (
+                    <option key={index} value={`option ${index}`}>
+                      {item.TenDaiLy}
+                    </option>
+                  ))}
               </select>
             </div>
             <div className="">
@@ -154,8 +179,8 @@ function LapPhieuThuTien() {
             </button>
             {showNo && (
               <div className="mx-4 px-4 py-2">
-                {daiLy[parseInt(daiLyDuocChon.split(" ")[1])].TenDaiLy}:{" "}
-                {tienNo}
+                {daiLy?.[parseInt(daiLyDuocChon.split(" ")[1])]?.TenDaiLy} :
+                {daiLy?.[parseInt(daiLyDuocChon.split(" ")[1])]?.TienNo}
               </div>
             )}
           </div>

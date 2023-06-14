@@ -18,8 +18,9 @@ function ThayDoiLoaiDaiLy() {
   const [showSuccess, setShowSuccess] = useState(null);
   const [editingAgencyId, setEditingAgencyId] = useState(null);
   const [daiLy, setDaiLy] = useState(null);
+  const [isNeedToFetch, setIsNeedToFetch] = useState(null);
 
-  const { loading, error, data } = useQuery(queryEveryLoaidaily);
+  const { loading, error, data, refetch } = useQuery(queryEveryLoaidaily);
   const [queryFunc, thamso] = useLazyQuery(queryThamSo);
   const [updateFunc] = useMutation(updateLoaidailyMutation);
   const [addFunc] = useMutation(addLoaidailyMutation);
@@ -28,8 +29,16 @@ function ThayDoiLoaiDaiLy() {
 
   useEffect(() => {
     if (data) setDaiLy([...data.everyLoaidaily]);
-    if (!thamso.data) queryFunc();
   }, [data]);
+
+  
+  useEffect(()=>{
+    if (!isNeedToFetch){ 
+        thamso.refetch();
+        refetch();
+        setIsNeedToFetch(true)
+    }
+  },[])
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);

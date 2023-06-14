@@ -18,8 +18,9 @@ function ThayDoiDonVi() {
   const [showError, setShowError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(null);
   const [editingUnitId, setEditingUnitId] = useState(null);
+  const [isNeedToFetch, setIsNeedToFetch] = useState(null);
 
-  const { loading, error, data } = useQuery(queryEveryDvt);
+  const { loading, error, data, refetch } = useQuery(queryEveryDvt);
   const [queryFunc, thamso] = useLazyQuery(queryThamSo);
   const [updateFunc] = useMutation(updateDvtMutation);
   const [addFunc] = useMutation(addDvtMutation);
@@ -28,8 +29,15 @@ function ThayDoiDonVi() {
 
   useEffect(() => {
     if (data) setUnits([...data.everyDvt]);
-    if (!thamso.data) queryFunc();
   }, [data]);
+
+  useEffect(()=>{
+    if (!isNeedToFetch){ 
+        thamso.refetch();
+        refetch();
+        setIsNeedToFetch(true)
+    }
+  },[])
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
@@ -53,7 +61,7 @@ function ThayDoiDonVi() {
 
   const handleAdd = () => {
     setShowError(null);
-    etShowSuccess(null);
+    setShowSuccess(null);
     const numDVT = thamso.data.thamso.SoLuongDVT;
 
     if (units.length >= numDVT) {
