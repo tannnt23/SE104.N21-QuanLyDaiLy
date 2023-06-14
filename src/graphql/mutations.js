@@ -275,12 +275,12 @@ const deleteCt_phieuxuathangMutation = gql`
 `
 
 const addBaocaodoanhsoMutation = gql`
-  mutation($Thang: String!) {
-    addBaocaodoanhso(Thang: $Thang) {
-      MaBaoCaoDoanhSo
-      Thang
-    }
+mutation AddBaocaodoanhso($thang: String!) {
+  addBaocaodoanhso(Thang: $thang) {
+    MaBaoCaoDoanhSo
+    Thang
   }
+}
 `
 
 const updateBaocaodoanhsoMutation = gql`
@@ -302,14 +302,11 @@ const deleteBaocaodoanhsoMutation = gql`
 `
 
 const addCt_bcdsMutation = gql`
-mutation AddCt_bcds($maBaoCaoDoanhSo: ID!, $maDaiLy: ID!, $soPhieuXuat: Int!, $tongTriGia: Int!, $tyLe: Float!) {
-  addCt_bcds(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo, MaDaiLy: $maDaiLy, SoPhieuXuat: $soPhieuXuat, TongTriGia: $tongTriGia, TyLe: $tyLe) {
+mutation AddCt_bcds($maBaoCaoDoanhSo: ID!, $maDaiLy: ID!) {
+  addCt_bcds(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo, MaDaiLy: $maDaiLy) {
     MaBaoCaoDoanhSo
     MaCT_BCDS
     MaDaiLy
-    SoPhieuXuat
-    TongTriGia
-    TyLe
   }
 }
 `
@@ -325,6 +322,12 @@ const updateCt_bcdsMutation = gql`
       Tyle
     }
   }
+`
+
+const calculateTyle = gql`
+mutation CalculateTyLe($maBaoCaoDoanhSo: ID!) {
+  calculateTyLe(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo)
+}
 `
 
 const deleteCt_bcdsMutation = gql`
@@ -470,6 +473,7 @@ export {
   addCt_bcdsMutation,
   updateCt_bcdsMutation,
   deleteCt_bcdsMutation,
+  calculateTyle,
   addPhieuthutienMutation,
   updatePhieuthutienMutation,
   deletePhieuthutienMutation,

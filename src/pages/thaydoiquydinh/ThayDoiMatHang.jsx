@@ -147,7 +147,7 @@ function ThayDoiMatHang() {
       <div className="flex justify-center items-center mb-5">
         <BackButton className="mr-4" />
         <h2 className="mb-4 text-4xl font-bold text-center w-full">
-          Danh sách loại đại lý
+          Danh sách mặt hàng
         </h2>
       </div>
       {/* Form */}
