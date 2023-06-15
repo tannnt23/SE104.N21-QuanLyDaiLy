@@ -30,7 +30,7 @@
 //   const [rows, setRows] = useState([]);
 //   const [field1Values, setField1Values] = useState(['1']);
 //   const [currentMatHangMap, setCurrentMatHangMap] = useState({});
-//   const [donGiaNhapMap, setDonGiaNhapMap] = useState({});
+//   const [donGiaXuatMap, setDonGiaXuatMap] = useState({});
 //   const [field3Values, setField3Values] = useState([]);
 //   const [thanhTienValues, setThanhTienValues] = useState([]);
 //   const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
@@ -100,20 +100,20 @@
 //       }
 //       setCurrentMatHangMap(updatedCurrentMatHangMap);
 
-//       const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+//       const updateddonGiaXuatMap = { ...donGiaXuatMap };
 //       if (matHang) {
-//         updatedDonGiaNhapMap[value] = matHang.DonGiaNhap;
+//         updateddonGiaXuatMap[value] = matHang.DonGiaNhap;
 //       } else {
-//         updatedDonGiaNhapMap[value] = 'Loading...';
+//         updateddonGiaXuatMap[value] = 'Loading...';
 //       }
-//       setDonGiaNhapMap(updatedDonGiaNhapMap);
+//       setDonGiaXuatMap(updateddonGiaXuatMap);
 //     } else if (field === 'field3') {
 //       const updatedField3Values = [...field3Values];
 //       updatedField3Values[index] = value;
 //       setField3Values(updatedField3Values);
 
 //       const updatedThanhTienValues = [...thanhTienValues];
-//       const donGia = donGiaNhapMap[row.field1] || 0;
+//       const donGia = donGiaXuatMap[row.field1] || 0;
 //       const thanhTien = parseFloat(value) * parseFloat(donGia);
 //       updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien;
 //       setThanhTienValues(updatedThanhTienValues);
@@ -127,15 +127,15 @@
 //   useEffect(() => {
 //     if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
 //       const updatedCurrentMatHangMap = { ...currentMatHangMap };
-//       const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+//       const updateddonGiaXuatMap = { ...donGiaXuatMap };
 //       dataMatHangByID.everyMatHangByArrOfMaMatHang.forEach((matHang) => {
 //         if (matHang && matHang.MaMatHang && matHang.relatedDvt) {
 //           updatedCurrentMatHangMap[matHang.MaMatHang] = matHang.relatedDvt.TenDVT;
-//           updatedDonGiaNhapMap[matHang.MaMatHang] = matHang.DonGiaNhap;
+//           updateddonGiaXuatMap[matHang.MaMatHang] = matHang.DonGiaNhap;
 //         }
 //       });
 //       setCurrentMatHangMap(updatedCurrentMatHangMap);
-//       setDonGiaNhapMap(updatedDonGiaNhapMap);
+//       setDonGiaXuatMap(updateddonGiaXuatMap);
 //     }
 //   }, [dataMatHangByID]);
 
@@ -186,7 +186,7 @@
 //                   className="w-full"
 //                 />
 //               </td>
-//               <td className="border">{donGiaNhapMap[row.field1]}</td>
+//               <td className="border">{donGiaXuatMap[row.field1]}</td>
 //               <td className="border">{thanhTienValues[index]}</td>
 //               <td className="border">
 //                 <button className='p-2 block bg-red-400 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
@@ -233,30 +233,67 @@
 
 // export default Table;
 
-import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
-import { addPhieuxuathangMutation } from '../../graphql/mutations';
+
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, gql } from '@apollo/client';
+import { queryEveryMathang, queryMatHangByIdArr, queryThamSo } from '../../graphql/queries';
+import { addPhieuxuathangMutation, addCt_phieuxuathangMutation, updateTienNo } from '../../graphql/mutations';
+
 
 const Table = ({ daily }) => {
-
-  // Define the mutation
   const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
+  const [addCt_phieuxuathang] = useMutation(addCt_phieuxuathangMutation);
+  const [accumulateTienNoMutation] = useMutation(updateTienNo);
 
+  // Define the query for fetching 'thamso' data
+  const { loading: loadingThamSo, error: errorThamSo, data: dataThamSo } = useQuery(queryThamSo);
+  // console.log(dataThamSo?.thamso?.TyLeDonGiaXuat)
+  const TyLeDonGiaXuat = dataThamSo?.thamso?.TyLeDonGiaXuat;
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Extract the values from the form
-    const TongTien = totalThanhTien;
-    const MaDaiLy = daily;
     try {
-      // Perform the mutation
+      // Perform the addPhieuxuathang mutation
       const { data } = await addPhieuxuathang({
-        variables: { TongTien, MaDaiLy },
+        variables: {
+          TongTien: totalThanhTien, // Replace with the desired value for NgayLapPhieu
+          MaDaiLy: daily, // Replace with the actual ID of the DaiLy
+        },
       });
-      console.log(data);
+      
+      const maPhieuXuat = data.addPhieuxuathang.MaPhieuXuat;
 
+      // Perform the addCt_phieuxuathang mutation for each row
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const maMatHang = row.field1;
+        const soLuongXuat = parseInt(row.field3);
+        const donGiaXuat = parseFloat(donGiaXuatMap[maMatHang]);
+        const thanhTien = parseFloat(thanhTienValues[i]);
+        console.log("so lg xuat:", soLuongXuat)
+
+        // Perform the addCt_phieuxuathang mutation for each row
+        const { data } = await addCt_phieuxuathang({
+          variables: {
+            maPhieuXuat,
+            maMatHang,
+            soLuongXuat,
+            donGiaXuat,
+            thanhTien,
+          },
+        });
+
+        console.log(data);
+      }
+      console.log(amountOwed);
+      const { data: { accumulateTienNo } } = await accumulateTienNoMutation({
+        variables: {
+          maDaiLy: daily,
+          tienNo: amountOwed,
+        },
+      });
+      console.log(accumulateTienNo);
     } catch (error) {
       console.log(error);
     }
@@ -265,11 +302,12 @@ const Table = ({ daily }) => {
   const [rows, setRows] = useState([]);
   const [field1Values, setField1Values] = useState(['1']);
   const [currentMatHangMap, setCurrentMatHangMap] = useState({});
-  const [donGiaNhapMap, setDonGiaNhapMap] = useState({});
+  const [donGiaXuatMap, setDonGiaXuatMap] = useState({});
   const [field3Values, setField3Values] = useState([]);
   const [thanhTienValues, setThanhTienValues] = useState([]);
   const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
   const [amountPaid, setAmountPaid] = useState(0); // State variable for the amount paid by the buyer
+
 
   const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang);
   let allMatHang = [];
@@ -335,22 +373,29 @@ const Table = ({ daily }) => {
       }
       setCurrentMatHangMap(updatedCurrentMatHangMap);
 
-      const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+      const updateddonGiaXuatMap = { ...donGiaXuatMap };
       if (matHang) {
-        updatedDonGiaNhapMap[value] = matHang.DonGiaNhap;
+        updateddonGiaXuatMap[value] = (matHang.DonGiaNhap * TyLeDonGiaXuat).toString(); // Updated formula
       } else {
-        updatedDonGiaNhapMap[value] = 'Loading...';
+        updateddonGiaXuatMap[value] = 'Loading...';
       }
-      setDonGiaNhapMap(updatedDonGiaNhapMap);
+      setDonGiaXuatMap(updateddonGiaXuatMap);
+
+      const updatedThanhTienValues = [...thanhTienValues];
+      const donGia = parseFloat(updateddonGiaXuatMap[value]) || 0;
+      const soLuong = parseFloat(row.field3) || 0;
+      const thanhTien = donGia * soLuong;
+      updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien.toString();
+      setThanhTienValues(updatedThanhTienValues);
     } else if (field === 'field3') {
       const updatedField3Values = [...field3Values];
       updatedField3Values[index] = value;
       setField3Values(updatedField3Values);
 
       const updatedThanhTienValues = [...thanhTienValues];
-      const donGia = donGiaNhapMap[row.field1] || 0;
-      const thanhTien = parseFloat(value) * parseFloat(donGia);
-      updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien;
+      const donGia = parseFloat(donGiaXuatMap[row.field1]) || 0;
+      const thanhTien = parseFloat(value) * donGia;
+      updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien.toString();
       setThanhTienValues(updatedThanhTienValues);
     }
   };
@@ -362,23 +407,23 @@ const Table = ({ daily }) => {
   useEffect(() => {
     if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
       const updatedCurrentMatHangMap = { ...currentMatHangMap };
-      const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+      const updateddonGiaXuatMap = { ...donGiaXuatMap };
       dataMatHangByID.everyMatHangByArrOfMaMatHang.forEach((matHang) => {
         if (matHang && matHang.MaMatHang && matHang.relatedDvt) {
           updatedCurrentMatHangMap[matHang.MaMatHang] = matHang.relatedDvt.TenDVT;
-          updatedDonGiaNhapMap[matHang.MaMatHang] = matHang.DonGiaNhap;
+          updateddonGiaXuatMap[matHang.MaMatHang] = matHang.DonGiaNhap * TyLeDonGiaXuat;
         }
       });
       setCurrentMatHangMap(updatedCurrentMatHangMap);
-      setDonGiaNhapMap(updatedDonGiaNhapMap);
+      setDonGiaXuatMap(updateddonGiaXuatMap);
     }
   }, [dataMatHangByID]);
 
-  if (loadingMatHang || loadingMatHangByID) {
+  if (loadingMatHang || loadingMatHangByID || loadingThamSo) {
     return <div>Loading...</div>;
   }
 
-  if (errorMatHang || errorMatHangByID) {
+  if (errorMatHang || errorMatHangByID || errorThamSo) {
     return <div>Error occurred.</div>;
   }
 
@@ -390,7 +435,7 @@ const Table = ({ daily }) => {
             <th className="border px-2">Mặt hàng</th>
             <th className="border px-2">Đơn vị tính</th>
             <th className="border px-2">Số lượng</th>
-            <th className="border px-2">Đơn giá</th>
+            <th className="border px-2">Đơn giá xuất</th>
             <th className="border px-2 underline">Thành tiền</th>
             <th className="border px-2">Action</th>
           </tr>
@@ -398,6 +443,7 @@ const Table = ({ daily }) => {
         <tbody>
           {rows.map((row, index) => (
             <tr key={index}>
+              {/* Mat hang */}
               <td className="border">
                 <select
                   value={row.field1}
@@ -412,7 +458,9 @@ const Table = ({ daily }) => {
                   ))}
                 </select>
               </td>
+              {/* Don vi tinh */}
               <td className="border bg-yellow-100 text-gray-500 px-2">{currentMatHangMap[row.field1]}</td>
+              {/* So luong */}
               <td className="border">
                 <input
                   type="number"
@@ -421,10 +469,12 @@ const Table = ({ daily }) => {
                   className="w-24 px-2"
                 />
               </td>
-              <td className="border bg-yellow-100 text-gray-500 px-2">{donGiaNhapMap[row.field1]}</td>
-              <td className="border px-2 text-green-800 font-bold">{thanhTienValues[index]}</td>
+              {/* Don gia */}
+              <td className="border bg-yellow-100 text-gray-500 px-2">{(parseFloat(donGiaXuatMap[row.field1]) * TyLeDonGiaXuat).toFixed(2)}</td>
+              {/* Thanh tien */}
+              <td className="border px-2 font-bold">{thanhTienValues[index]}</td>
               <td className="border">
-                <button className='p-2 block bg-red-400 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
+                <button className='p-2 block bg-red-600 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
               </td>
             </tr>
           ))}
@@ -460,46 +510,53 @@ const Table = ({ daily }) => {
           </tr>
         </tfoot>
       </table>
-      <button onClick={addRow} className='block bg-green-400 text-white font-bold p-2 '>Add Row</button>
-      <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2'>Submit</button>
+      <button onClick={addRow} className='block bg-green-600 text-white font-bold p-2 mt-2 '>Add Row</button>
+      <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2 mt-2'>Submit</button>
     </div>
   );
 };
 
 export default Table;
+
+
+
+
+
 // import React, { useState, useEffect } from 'react';
-// import { useQuery, useMutation } from '@apollo/client';
-// import { queryEveryMathang, queryMatHangByIdArr } from '../../graphql/queries';
+// import { useQuery, useMutation, gql } from '@apollo/client';
+// import { queryEveryMathang, queryMatHangByIdArr, queryThamSo } from '../../graphql/queries';
 // import { addPhieuxuathangMutation } from '../../graphql/mutations';
 
-// const Table = ({ daily }) => {
 
-//   // Define the mutation
+// const Table = ({ daily }) => {
 //   const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
 
-
-//   // Function to handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     // Extract the values from the form
-//     const TongTien = totalThanhTien;
-//     const MaDaiLy = daily;
-//     try {
-//       // Perform the mutation
-//       const { data } = await addPhieuxuathang({
-//         variables: { TongTien, MaDaiLy },
-//       });
-//       console.log(data);
-
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
+//   // Define the query for fetching 'thamso' data
+//   const { loading: loadingThamSo, error: errorThamSo, data: dataThamSo } = useQuery(queryThamSo);
+//   // console.log(dataThamSo?.thamso?.TyLeDonGiaXuat)
+//   const TyLeDonGiaXuat = dataThamSo?.thamso?.TyLeDonGiaXuat;
+//   console.log(TyLeDonGiaXuat)
+  // Function to handle form submission
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   // Extract the values from the form
+  //   const TongTien = totalThanhTien;
+  //   const MaDaiLy = daily;
+  //   try {
+  //     // Perform the mutation
+  //     const { data } = await addPhieuxuathang({
+  //       variables: { TongTien, MaDaiLy },
+  //     });
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
 //   const [rows, setRows] = useState([]);
 //   const [field1Values, setField1Values] = useState(['1']);
 //   const [currentMatHangMap, setCurrentMatHangMap] = useState({});
-//   const [donGiaNhapMap, setDonGiaNhapMap] = useState({});
+//   const [donGiaXuatMap, setDonGiaXuatMap] = useState({});
 //   const [field3Values, setField3Values] = useState([]);
 //   const [thanhTienValues, setThanhTienValues] = useState([]);
 //   const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
@@ -569,22 +626,29 @@ export default Table;
 //       }
 //       setCurrentMatHangMap(updatedCurrentMatHangMap);
 
-//       const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+//       const updateddonGiaXuatMap = { ...donGiaXuatMap };
 //       if (matHang) {
-//         updatedDonGiaNhapMap[value] = matHang.DonGiaNhap;
+//         updateddonGiaXuatMap[value] = (matHang.DonGiaNhap * TyLeDonGiaXuat).toString(); // Updated formula
 //       } else {
-//         updatedDonGiaNhapMap[value] = 'Loading...';
+//         updateddonGiaXuatMap[value] = 'Loading...';
 //       }
-//       setDonGiaNhapMap(updatedDonGiaNhapMap);
+//       setDonGiaXuatMap(updateddonGiaXuatMap);
+
+//       const updatedThanhTienValues = [...thanhTienValues];
+//       const donGia = parseFloat(updateddonGiaXuatMap[value]) || 0;
+//       const soLuong = parseFloat(row.field3) || 0;
+//       const thanhTien = donGia * soLuong;
+//       updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien.toString();
+//       setThanhTienValues(updatedThanhTienValues);
 //     } else if (field === 'field3') {
 //       const updatedField3Values = [...field3Values];
 //       updatedField3Values[index] = value;
 //       setField3Values(updatedField3Values);
 
 //       const updatedThanhTienValues = [...thanhTienValues];
-//       const donGia = donGiaNhapMap[row.field1] || 0;
-//       const thanhTien = parseFloat(value) * parseFloat(donGia);
-//       updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien;
+//       const donGia = parseFloat(donGiaXuatMap[row.field1]) || 0;
+//       const thanhTien = parseFloat(value) * donGia;
+//       updatedThanhTienValues[index] = isNaN(thanhTien) ? '' : thanhTien.toString();
 //       setThanhTienValues(updatedThanhTienValues);
 //     }
 //   };
@@ -596,23 +660,23 @@ export default Table;
 //   useEffect(() => {
 //     if (dataMatHangByID && dataMatHangByID.everyMatHangByArrOfMaMatHang) {
 //       const updatedCurrentMatHangMap = { ...currentMatHangMap };
-//       const updatedDonGiaNhapMap = { ...donGiaNhapMap };
+//       const updateddonGiaXuatMap = { ...donGiaXuatMap };
 //       dataMatHangByID.everyMatHangByArrOfMaMatHang.forEach((matHang) => {
 //         if (matHang && matHang.MaMatHang && matHang.relatedDvt) {
 //           updatedCurrentMatHangMap[matHang.MaMatHang] = matHang.relatedDvt.TenDVT;
-//           updatedDonGiaNhapMap[matHang.MaMatHang] = matHang.DonGiaNhap;
+//           updateddonGiaXuatMap[matHang.MaMatHang] = matHang.DonGiaNhap;
 //         }
 //       });
 //       setCurrentMatHangMap(updatedCurrentMatHangMap);
-//       setDonGiaNhapMap(updatedDonGiaNhapMap);
+//       setDonGiaXuatMap(updateddonGiaXuatMap);
 //     }
 //   }, [dataMatHangByID]);
 
-//   if (loadingMatHang || loadingMatHangByID) {
+//   if (loadingMatHang || loadingMatHangByID || loadingThamSo) {
 //     return <div>Loading...</div>;
 //   }
 
-//   if (errorMatHang || errorMatHangByID) {
+//   if (errorMatHang || errorMatHangByID || errorThamSo) {
 //     return <div>Error occurred.</div>;
 //   }
 
@@ -624,7 +688,7 @@ export default Table;
 //             <th className="border px-2">Mặt hàng</th>
 //             <th className="border px-2">Đơn vị tính</th>
 //             <th className="border px-2">Số lượng</th>
-//             <th className="border px-2">Đơn giá</th>
+//             <th className="border px-2">Đơn giá xuất</th>
 //             <th className="border px-2 underline">Thành tiền</th>
 //             <th className="border px-2">Action</th>
 //           </tr>
@@ -632,6 +696,7 @@ export default Table;
 //         <tbody>
 //           {rows.map((row, index) => (
 //             <tr key={index}>
+//               {/* Mat hang */}
 //               <td className="border">
 //                 <select
 //                   value={row.field1}
@@ -646,7 +711,9 @@ export default Table;
 //                   ))}
 //                 </select>
 //               </td>
+//               {/* Don vi tinh */}
 //               <td className="border bg-yellow-100 text-gray-500 px-2">{currentMatHangMap[row.field1]}</td>
+//               {/* So luong */}
 //               <td className="border">
 //                 <input
 //                   type="number"
@@ -655,10 +722,12 @@ export default Table;
 //                   className="w-24 px-2"
 //                 />
 //               </td>
-//               <td className="border bg-yellow-100 text-gray-500 px-2">{donGiaNhapMap[row.field1]}</td>
-//               <td className="border px-2 text-green-800 font-bold">{thanhTienValues[index]}</td>
+//               {/* Don gia */}
+//               <td className="border bg-yellow-100 text-gray-500 px-2">{(parseFloat(donGiaXuatMap[row.field1]) * TyLeDonGiaXuat).toFixed(2)}</td>
+//               {/* Thanh tien */}
+//               <td className="border px-2 font-bold">{thanhTienValues[index]}</td>
 //               <td className="border">
-//                 <button className='p-2 block bg-red-400 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
+//                 <button className='p-2 block bg-red-600 text-white font-bold' onClick={() => removeRow(index)}>Remove</button>
 //               </td>
 //             </tr>
 //           ))}
@@ -694,13 +763,23 @@ export default Table;
 //           </tr>
 //         </tfoot>
 //       </table>
-//       <button onClick={addRow} className='block bg-green-400 text-white font-bold p-2 '>Add Row</button>
-//       <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2'>Submit</button>
+//       <button onClick={addRow} className='block bg-green-600 text-white font-bold p-2 mt-2 '>Add Row</button>
+//       <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2 mt-2'>Submit</button>
 //     </div>
 //   );
 // };
 
 // export default Table;
+
+
+
+
+
+
+
+
+
+
 
 
 

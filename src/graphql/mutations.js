@@ -292,6 +292,14 @@ const deleteMathangMutation = gql`
     }
   }
 `
+const updateTienNo = gql`
+mutation ($maDaiLy: ID!, $tienNo: Float!) {
+  accumulateTienNo(MaDaiLy: $maDaiLy, TienNo: $tienNo) {
+    MaDaiLy
+    TienNo
+  }
+}
+`
 
 const addPhieuxuathangMutation = gql`
   mutation ($NgayLapPhieu: String, $TongTien: Float!, $MaDaiLy: ID!) {
@@ -662,5 +670,6 @@ export {
   addCt_bccnMutation,
   updateCt_bccnMutation,
   deleteCt_bccnMutation,
-  updateThamsoMutation
+  updateThamsoMutation,
+  updateTienNo
 }
