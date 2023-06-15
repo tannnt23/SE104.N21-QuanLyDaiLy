@@ -16,7 +16,7 @@ function PhieuNhapHang() {
 
   const options = data.everyMathang.map((item) => ({
     value: item.MaMatHang,
-    label: item.TenMatHang,
+    label: `${item.TenMatHang} (Còn lại: ${item.SoLuongTon})`,
   }));
 
   const handleSubmit = async (event) => {
@@ -39,12 +39,16 @@ function PhieuNhapHang() {
 
   return (
     <form onSubmit={handleSubmit} className="w-1/3">
-      <h1 className='font-bold text-4xl mb-4'>Lập phiếu nhập hàng</h1>
+      <h1 className="font-bold text-4xl mb-4">Lập phiếu nhập hàng</h1>
       <div className="mb-4">
         <label htmlFor="MaMatHang" className="block">
           Tên mặt hàng:
         </label>
-        <select name="MaMatHang" id="MaMatHang" className="w-full border border-gray-300 rounded px-2 py-1">
+        <select
+          name="MaMatHang"
+          id="MaMatHang"
+          className="w-full border border-gray-300 rounded px-2 py-1"
+        >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -56,14 +60,21 @@ function PhieuNhapHang() {
         <label htmlFor="SoLuong" className="block">
           Số lượng:
         </label>
-        <input type="number" name="SoLuong" id="SoLuong" className="w-full border border-gray-300 rounded px-2 py-1" />
+        <input
+          type="number"
+          name="SoLuong"
+          id="SoLuong"
+          className="w-full border border-gray-300 rounded px-2 py-1"
+        />
       </div>
-      <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
         Submit
       </button>
     </form>
   );
-
 }
 
 export default PhieuNhapHang;
