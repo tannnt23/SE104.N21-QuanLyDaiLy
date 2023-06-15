@@ -21,6 +21,7 @@ function MenuWrapper() {
       id: 2,
       label: "Nhập hàng vào kho",
       icon: <WarehouseIcon fontSize="large" />,
+      link: 'nhap-hang-vao-kho',
     },
     {
       id: 3,
