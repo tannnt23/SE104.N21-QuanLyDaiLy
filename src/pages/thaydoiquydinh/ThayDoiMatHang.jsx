@@ -36,14 +36,14 @@ function ThayDoiMatHang() {
     if (data) setProduct([...data.everyMathang]);
   }, [data]);
 
-  useEffect(()=>{
-    if (!isNeedToFetch){ 
-        thamso.refetch();
-        dvt.refetch();
-        refetch();
-        setIsNeedToFetch(true)
+  useEffect(() => {
+    if (!isNeedToFetch) {
+      thamso.refetch();
+      dvt.refetch();
+      refetch();
+      setIsNeedToFetch(true);
     }
-  },[])
+  }, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
@@ -189,32 +189,7 @@ function ThayDoiMatHang() {
                         agency.TenMatHang
                       )}
                     </td>
-                    <td className="border px-4 py-2">
-                      {editingProductId === agency.MaMatHang ? (
-                        <input
-                          type="number"
-                          value={agency.SoLuongTon}
-                          onChange={(e) =>
-                            setProduct((prevAgencies) =>
-                              prevAgencies.map((prevAgency) =>
-                                prevAgency.MaMatHang === agency.MaMatHang
-                                  ? {
-                                      ...prevAgency,
-                                      SoLuongTon:
-                                        e.target.value == ""
-                                          ? ""
-                                          : parseInt(e.target.value),
-                                    }
-                                  : prevAgency
-                              )
-                            )
-                          }
-                          className="border border-gray-300 p-2"
-                        />
-                      ) : (
-                        agency.SoLuongTon
-                      )}
-                    </td>
+                    <td className="border px-4 py-2">{agency.SoLuongTon}</td>
                     <td className="border px-4 py-2">
                       {editingProductId === agency.MaMatHang ? (
                         <input
@@ -243,8 +218,7 @@ function ThayDoiMatHang() {
                     </td>
                     <td className="border px-4 py-2">
                       {editingProductId === agency.MaMatHang ? (
-                        <input
-                          type="number"
+                        <select
                           value={agency.MaDVT}
                           onChange={(e) =>
                             setProduct((prevAgencies) =>
@@ -259,13 +233,20 @@ function ThayDoiMatHang() {
                             )
                           }
                           className="border border-gray-300 p-2"
-                        />
+                        >
+                          {dvt?.data?.everyDvt.map((obj) => (
+                            <option key={obj.MaDVT} value={obj.MaDVT}>
+                              {obj.TenDVT}
+                            </option>
+                          ))}
+                        </select>
                       ) : (
                         dvt?.data?.everyDvt.find(
-                          (obj) => obj.MaDVT == agency.MaDVT
+                          (obj) => obj.MaDVT === agency.MaDVT
                         )?.TenDVT
                       )}
                     </td>
+
                     <td className="border px-4 py-2">
                       {editingProductId === agency.MaMatHang ? (
                         <button

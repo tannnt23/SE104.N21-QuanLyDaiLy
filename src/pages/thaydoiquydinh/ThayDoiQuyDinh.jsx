@@ -5,6 +5,7 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 import DisplaySettingsOutlinedIcon from "@mui/icons-material/DisplaySettingsOutlined";
 import DynamicFeedOutlinedIcon from "@mui/icons-material/DynamicFeedOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import StoreMallDirectoryOutlinedIcon from '@mui/icons-material/StoreMallDirectoryOutlined';
 
 function ThayDoiQuyDinh() {
   const menuItemContents = [
@@ -31,6 +32,12 @@ function ThayDoiQuyDinh() {
       label: "Mặt hàng",
       icon: <Inventory2OutlinedIcon fontSize="large" />,
       link: "mat-hang",
+    },
+    {
+      id: 5,
+      label: "Đại lý",
+      icon: <StoreMallDirectoryOutlinedIcon fontSize="large" />,
+      link: "dai-ly",
     },
   ];
 
