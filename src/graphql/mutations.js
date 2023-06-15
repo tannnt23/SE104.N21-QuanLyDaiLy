@@ -1,21 +1,53 @@
 import { gql } from '@apollo/client'
 
 const updateThamsoMutation = gql`
-  mutation($soLuongLoaiDaiLy: Int, $soDaiLyToiDaTrongQuan: Int, $soLuongMatHang: Int, $soLuongDvt: Int, $soTienThuKhongVuotQuaSoTienDaiLyDangNo: Int, $tyLeDonGiaXuat: Float) {
-  updateThamso(SoLuongLoaiDaiLy: $soLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan: $soDaiLyToiDaTrongQuan, SoLuongMatHang: $soLuongMatHang, SoLuongDVT: $soLuongDvt, SoTienThuKhongVuotQuaSoTienDaiLyDangNo: $soTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat: $tyLeDonGiaXuat) {
-    MaThamSo
-    SoDaiLyToiDaTrongQuan
-    SoLuongDVT
-    SoLuongLoaiDaiLy
-    SoLuongMatHang
-    SoTienThuKhongVuotQuaSoTienDaiLyDangNo
-    TyLeDonGiaXuat
+  mutation (
+    $soLuongLoaiDaiLy: Int
+    $soDaiLyToiDaTrongQuan: Int
+    $soLuongMatHang: Int
+    $soLuongDvt: Int
+    $soTienThuKhongVuotQuaSoTienDaiLyDangNo: Int
+    $tyLeDonGiaXuat: Float
+  ) {
+    updateThamso(
+      SoLuongLoaiDaiLy: $soLuongLoaiDaiLy
+      SoDaiLyToiDaTrongQuan: $soDaiLyToiDaTrongQuan
+      SoLuongMatHang: $soLuongMatHang
+      SoLuongDVT: $soLuongDvt
+      SoTienThuKhongVuotQuaSoTienDaiLyDangNo: $soTienThuKhongVuotQuaSoTienDaiLyDangNo
+      TyLeDonGiaXuat: $tyLeDonGiaXuat
+    ) {
+      MaThamSo
+      SoDaiLyToiDaTrongQuan
+      SoLuongDVT
+      SoLuongLoaiDaiLy
+      SoLuongMatHang
+      SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+      TyLeDonGiaXuat
+    }
   }
-}
 `
 const addDailyMutation = gql`
-  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Float, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
-    addDaily(TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
+  mutation (
+    $TenDaiLy: String!
+    $DienThoai: String!
+    $DiaChi: String!
+    $NgayTiepNhan: String
+    $TienNo: Float
+    $Email: String
+    $MaQuan: ID!
+    $MaLoaiDaiLy: ID!
+  ) {
+    addDaily(
+      TenDaiLy: $TenDaiLy
+      DienThoai: $DienThoai
+      DiaChi: $DiaChi
+      NgayTiepNhan: $NgayTiepNhan
+      TienNo: $TienNo
+      Email: $Email
+      MaQuan: $MaQuan
+      MaLoaiDaiLy: $MaLoaiDaiLy
+    ) {
       MaDaiLy
       TenDaiLy
       DienThoai
@@ -30,8 +62,28 @@ const addDailyMutation = gql`
 `
 
 const updateDailyMutation = gql`
-  mutation($MaDaiLy: ID!, $TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String!, $TienNo: Float, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
-    updateDaily(MaDaiLy: $MaDaiLy, TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
+  mutation (
+    $MaDaiLy: ID!
+    $TenDaiLy: String!
+    $DienThoai: String!
+    $DiaChi: String!
+    $NgayTiepNhan: String!
+    $TienNo: Float
+    $Email: String
+    $MaQuan: ID!
+    $MaLoaiDaiLy: ID!
+  ) {
+    updateDaily(
+      MaDaiLy: $MaDaiLy
+      TenDaiLy: $TenDaiLy
+      DienThoai: $DienThoai
+      DiaChi: $DiaChi
+      NgayTiepNhan: $NgayTiepNhan
+      TienNo: $TienNo
+      Email: $Email
+      MaQuan: $MaQuan
+      MaLoaiDaiLy: $MaLoaiDaiLy
+    ) {
       MaDaiLy
       TenDaiLy
       DienThoai
@@ -46,8 +98,8 @@ const updateDailyMutation = gql`
 `
 
 const deleteDailyMutation = gql`
-  mutation($MaDaiLy: ID!){
-    deleteDaily(MaDaiLy: $MaDaiLy){
+  mutation ($MaDaiLy: ID!) {
+    deleteDaily(MaDaiLy: $MaDaiLy) {
       MaDaiLy
       TenDaiLy
       DienThoai
@@ -62,7 +114,7 @@ const deleteDailyMutation = gql`
 `
 
 const addQuanMutation = gql`
-  mutation($TenQuan: String!) {
+  mutation ($TenQuan: String!) {
     addQuan(TenQuan: $TenQuan) {
       MaQuan
       TenQuan
@@ -71,7 +123,7 @@ const addQuanMutation = gql`
 `
 
 const updateQuanMutation = gql`
-  mutation($MaQuan: ID!, $TenQuan: String!) {
+  mutation ($MaQuan: ID!, $TenQuan: String!) {
     updateQuan(MaQuan: $MaQuan, TenQuan: $TenQuan) {
       MaQuan
       TenQuan
@@ -80,8 +132,8 @@ const updateQuanMutation = gql`
 `
 
 const deleteQuanMutation = gql`
-  mutation($MaQuan: ID!){
-    deleteQuan(MaQuan: $MaQuan){
+  mutation ($MaQuan: ID!) {
+    deleteQuan(MaQuan: $MaQuan) {
       MaQuan
       TenQuan
     }
@@ -89,7 +141,7 @@ const deleteQuanMutation = gql`
 `
 
 const addLoaidailyMutation = gql`
-  mutation($TenLoaiDaiLy: String!, $SoNoToiDa: Int!) {
+  mutation ($TenLoaiDaiLy: String!, $SoNoToiDa: Int!) {
     addLoaidaily(TenLoaiDaiLy: $TenLoaiDaiLy, SoNoToiDa: $SoNoToiDa) {
       MaLoaiDaiLy
       TenLoaiDaiLy
@@ -99,8 +151,12 @@ const addLoaidailyMutation = gql`
 `
 
 const updateLoaidailyMutation = gql`
-  mutation($MaLoaiDaiLy: ID!, $TenLoaiDaiLy: String!, $SoNoToiDa: Int!) {
-    updateLoaidaily(MaLoaiDaiLy: $MaLoaiDaiLy, TenLoaiDaiLy: $TenLoaiDaiLy, SoNoToiDa: $SoNoToiDa) {
+  mutation ($MaLoaiDaiLy: ID!, $TenLoaiDaiLy: String!, $SoNoToiDa: Int!) {
+    updateLoaidaily(
+      MaLoaiDaiLy: $MaLoaiDaiLy
+      TenLoaiDaiLy: $TenLoaiDaiLy
+      SoNoToiDa: $SoNoToiDa
+    ) {
       MaLoaiDaiLy
       TenLoaiDaiLy
       SoNoToiDa
@@ -109,8 +165,8 @@ const updateLoaidailyMutation = gql`
 `
 
 const deleteLoaidailyMutation = gql`
-  mutation($MaLoaiDaiLy: ID!){
-    deleteLoaidaily(MaLoaiDaiLy: $MaLoaiDaiLy){
+  mutation ($MaLoaiDaiLy: ID!) {
+    deleteLoaidaily(MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaLoaiDaiLy
       TenLoaiDaiLy
       SoNoToiDa
@@ -119,7 +175,7 @@ const deleteLoaidailyMutation = gql`
 `
 
 const addDvtMutation = gql`
-  mutation($TenDVT: String!) {
+  mutation ($TenDVT: String!) {
     addDvt(TenDVT: $TenDVT) {
       MaDVT
       TenDVT
@@ -128,7 +184,7 @@ const addDvtMutation = gql`
 `
 
 const updateDvtMutation = gql`
-  mutation($MaDVT: ID!, $TenDVT: String!) {
+  mutation ($MaDVT: ID!, $TenDVT: String!) {
     updateDvt(MaDVT: $MaDVT, TenDVT: $TenDVT) {
       MaDVT
       TenDVT
@@ -137,8 +193,8 @@ const updateDvtMutation = gql`
 `
 
 const deleteDvtMutation = gql`
-  mutation($MaDVT: ID!){
-    deleteDvt(MaDVT: $MaDVT){
+  mutation ($MaDVT: ID!) {
+    deleteDvt(MaDVT: $MaDVT) {
       MaDVT
       TenDVT
     }
@@ -146,7 +202,7 @@ const deleteDvtMutation = gql`
 `
 
 const addPhieunhaphangMutation = gql`
-  mutation($SoLuong: Int!, $MaMatHang: ID!) {
+  mutation ($SoLuong: Int!, $MaMatHang: ID!) {
     addPhieunhaphang(SoLuong: $SoLuong, MaMatHang: $MaMatHang) {
       MaPhieuNhap
       SoLuong
@@ -156,8 +212,12 @@ const addPhieunhaphangMutation = gql`
 `
 
 const updatePhieunhaphangMutation = gql`
-  mutation($MaPhieuNhap: ID!, $SoLuong: Int!, $MaMatHang: ID!) {
-    updatePhieunhaphang(MaPhieuNhap: $MaPhieuNhap, SoLuong: $SoLuong, MaMatHang: $MaMatHang) {
+  mutation ($MaPhieuNhap: ID!, $SoLuong: Int!, $MaMatHang: ID!) {
+    updatePhieunhaphang(
+      MaPhieuNhap: $MaPhieuNhap
+      SoLuong: $SoLuong
+      MaMatHang: $MaMatHang
+    ) {
       MaPhieuNhap
       SoLuong
       MaMatHang
@@ -166,8 +226,8 @@ const updatePhieunhaphangMutation = gql`
 `
 
 const deletePhieunhaphangMutation = gql`
-  mutation($MaPhieuNhap: ID!){
-    deletePhieunhaphang(MaPhieuNhap: $MaPhieuNhap){
+  mutation ($MaPhieuNhap: ID!) {
+    deletePhieunhaphang(MaPhieuNhap: $MaPhieuNhap) {
       MaPhieuNhap
       SoLuong
       MaMatHang
@@ -176,8 +236,18 @@ const deletePhieunhaphangMutation = gql`
 `
 
 const addMathangMutation = gql`
-  mutation($TenMatHang: String!, $SoLuongTon: Int!, $DonGiaNhap: Int!, $MaDVT: ID!) {
-    addMathang(TenMatHang: $TenMatHang, SoLuongTon: $SoLuongTon, DonGiaNhap: $DonGiaNhap, MaDVT: $MaDVT) {
+  mutation (
+    $TenMatHang: String!
+    $SoLuongTon: Int!
+    $DonGiaNhap: Int!
+    $MaDVT: ID!
+  ) {
+    addMathang(
+      TenMatHang: $TenMatHang
+      SoLuongTon: $SoLuongTon
+      DonGiaNhap: $DonGiaNhap
+      MaDVT: $MaDVT
+    ) {
       MaMatHang
       TenMatHang
       SoLuongTon
@@ -188,8 +258,20 @@ const addMathangMutation = gql`
 `
 
 const updateMathangMutation = gql`
-  mutation($MaMatHang: ID!, $TenMatHang: String!, $SoLuongTon: Int!, $DonGiaNhap: Int!, $MaDVT: ID!) {
-    updateMathang(MaMatHang: $MaMatHang, TenMatHang: $TenMatHang, SoLuongTon: $SoLuongTon, DonGiaNhap: $DonGiaNhap, MaDVT: $MaDVT) {
+  mutation (
+    $MaMatHang: ID!
+    $TenMatHang: String!
+    $SoLuongTon: Int!
+    $DonGiaNhap: Int!
+    $MaDVT: ID!
+  ) {
+    updateMathang(
+      MaMatHang: $MaMatHang
+      TenMatHang: $TenMatHang
+      SoLuongTon: $SoLuongTon
+      DonGiaNhap: $DonGiaNhap
+      MaDVT: $MaDVT
+    ) {
       MaMatHang
       TenMatHang
       SoLuongTon
@@ -200,8 +282,8 @@ const updateMathangMutation = gql`
 `
 
 const deleteMathangMutation = gql`
-  mutation($MaMatHang: ID!){
-    deleteMathang(MaMatHang: $MaMatHang){
+  mutation ($MaMatHang: ID!) {
+    deleteMathang(MaMatHang: $MaMatHang) {
       MaMatHang
       TenMatHang
       SoLuongTon
@@ -212,8 +294,12 @@ const deleteMathangMutation = gql`
 `
 
 const addPhieuxuathangMutation = gql`
-  mutation($NgayLapPhieu: String, $TongTien: Float!, $MaDaiLy: ID!) {
-    addPhieuxuathang(NgayLapPhieu: $NgayLapPhieu, TongTien: $TongTien, MaDaiLy: $MaDaiLy) {
+  mutation ($NgayLapPhieu: String, $TongTien: Float!, $MaDaiLy: ID!) {
+    addPhieuxuathang(
+      NgayLapPhieu: $NgayLapPhieu
+      TongTien: $TongTien
+      MaDaiLy: $MaDaiLy
+    ) {
       MaPhieuXuat
       NgayLapPhieu
       TongTien
@@ -223,8 +309,18 @@ const addPhieuxuathangMutation = gql`
 `
 
 const updatePhieuxuathangMutation = gql`
-  mutation($MaPhieuXuat: ID!, $NgayLapPhieu: String!, $TongTien: Float!, $MaDaiLy: ID!) {
-    updatePhieuxuathang(MaPhieuXuat: $MaPhieuXuat, NgayLapPhieu: $NgayLapPhieu, TongTien: $TongTien, MaDaiLy: $MaDaiLy) {
+  mutation (
+    $MaPhieuXuat: ID!
+    $NgayLapPhieu: String!
+    $TongTien: Float!
+    $MaDaiLy: ID!
+  ) {
+    updatePhieuxuathang(
+      MaPhieuXuat: $MaPhieuXuat
+      NgayLapPhieu: $NgayLapPhieu
+      TongTien: $TongTien
+      MaDaiLy: $MaDaiLy
+    ) {
       MaPhieuXuat
       NgayLapPhieu
       TongTien
@@ -234,8 +330,8 @@ const updatePhieuxuathangMutation = gql`
 `
 
 const deletePhieuxuathangMutation = gql`
-  mutation($MaPhieuXuat: ID!){
-    deletePhieuxuathang(MaPhieuXuat: $MaPhieuXuat){
+  mutation ($MaPhieuXuat: ID!) {
+    deletePhieuxuathang(MaPhieuXuat: $MaPhieuXuat) {
       MaPhieuXuat
       NgayLapPhieu
       TongTien
@@ -245,18 +341,47 @@ const deletePhieuxuathangMutation = gql`
 `
 
 const addCt_phieuxuathangMutation = gql`
-  mutation($MaPhieuXuat: ID!, $MaMatHang: ID!) {
-    addCt_phieuxuathang(MaPhieuXuat: $MaPhieuXuat, MaMatHang: $MaMatHang) {
-      MaCT_PXH
+  mutation AddCt_phieuxuathang(
+    $maPhieuXuat: ID!
+    $maMatHang: ID!
+    $soLuongXuat: Int!
+    $donGiaXuat: Float!
+    $thanhTien: Float!
+  ) {
+    addCt_phieuxuathang(
+      MaPhieuXuat: $maPhieuXuat
+      MaMatHang: $maMatHang
+      SoLuongXuat: $soLuongXuat
+      DonGiaXuat: $donGiaXuat
+      ThanhTien: $thanhTien
+    ) {
       MaPhieuXuat
       MaMatHang
+      SoLuongXuat
+      relatedMathang {
+        MaMatHang
+        SoLuongTon
+        TenMatHang
+      }
+      MaCT_PXH
+      ThanhTien
+      relatedPhieuxuathang {
+        MaDaiLy
+        MaPhieuXuat
+        NgayLapPhieu
+        TongTien
+      }
     }
   }
 `
 
 const updateCt_phieuxuathangMutation = gql`
-  mutation($MaCT_PXH: ID!, $MaPhieuXuat: ID!, $MaMatHang: ID!) {
-    updateCt_phieuxuathang(MaCT_PXH: $MaCT_PXH, MaPhieuXuat: $MaPhieuXuat, MaMatHang: $MaMatHang) {
+  mutation ($MaCT_PXH: ID!, $MaPhieuXuat: ID!, $MaMatHang: ID!) {
+    updateCt_phieuxuathang(
+      MaCT_PXH: $MaCT_PXH
+      MaPhieuXuat: $MaPhieuXuat
+      MaMatHang: $MaMatHang
+    ) {
       MaCT_PXH
       MaPhieuXuat
       MaMatHang
@@ -265,8 +390,8 @@ const updateCt_phieuxuathangMutation = gql`
 `
 
 const deleteCt_phieuxuathangMutation = gql`
-  mutation($MaCT_PXH: ID!){
-    deleteCt_phieuxuathang(MaCT_PXH: $MaCT_PXH){
+  mutation ($MaCT_PXH: ID!) {
+    deleteCt_phieuxuathang(MaCT_PXH: $MaCT_PXH) {
       MaCT_PXH
       MaPhieuXuat
       MaMatHang
@@ -275,16 +400,16 @@ const deleteCt_phieuxuathangMutation = gql`
 `
 
 const addBaocaodoanhsoMutation = gql`
-mutation AddBaocaodoanhso($thang: String!) {
-  addBaocaodoanhso(Thang: $thang) {
-    MaBaoCaoDoanhSo
-    Thang
+  mutation AddBaocaodoanhso($thang: String!) {
+    addBaocaodoanhso(Thang: $thang) {
+      MaBaoCaoDoanhSo
+      Thang
+    }
   }
-}
 `
 
 const updateBaocaodoanhsoMutation = gql`
-  mutation($MaBaoCaoDoanhSo: ID!, $Thang: String!) {
+  mutation ($MaBaoCaoDoanhSo: ID!, $Thang: String!) {
     updateBaocaodoanhso(MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo, Thang: $Thang) {
       MaBaoCaoDoanhSo
       Thang
@@ -293,8 +418,8 @@ const updateBaocaodoanhsoMutation = gql`
 `
 
 const deleteBaocaodoanhsoMutation = gql`
-  mutation($MaBaoCaoDoanhSo: ID!){
-    deleteBaocaodoanhso(MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo){
+  mutation ($MaBaoCaoDoanhSo: ID!) {
+    deleteBaocaodoanhso(MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo) {
       MaBaoCaoDoanhSo
       Thang
     }
@@ -302,18 +427,32 @@ const deleteBaocaodoanhsoMutation = gql`
 `
 
 const addCt_bcdsMutation = gql`
-mutation AddCt_bcds($maBaoCaoDoanhSo: ID!, $maDaiLy: ID!) {
-  addCt_bcds(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo, MaDaiLy: $maDaiLy) {
-    MaBaoCaoDoanhSo
-    MaCT_BCDS
-    MaDaiLy
+  mutation AddCt_bcds($maBaoCaoDoanhSo: ID!, $maDaiLy: ID!) {
+    addCt_bcds(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo, MaDaiLy: $maDaiLy) {
+      MaBaoCaoDoanhSo
+      MaCT_BCDS
+      MaDaiLy
+    }
   }
-}
 `
 
 const updateCt_bcdsMutation = gql`
-  mutation($MaCT_BCDS: ID!, $MaBaoCaoDoanhSo: ID!, $MaDaiLy: ID!, $SoPhieuXuat: Int!, $TongTriGia: Float!, $Tyle: Float!) {
-    updateCt_bcds(MaCT_BCDS: $MaCT_BCDS, MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo, MaDaiLy: $MaDaiLy, SoPhieuXuat: $SoPhieuXuat, TongTriGia: $TongTriGia, Tyle: $Tyle) {
+  mutation (
+    $MaCT_BCDS: ID!
+    $MaBaoCaoDoanhSo: ID!
+    $MaDaiLy: ID!
+    $SoPhieuXuat: Int!
+    $TongTriGia: Float!
+    $Tyle: Float!
+  ) {
+    updateCt_bcds(
+      MaCT_BCDS: $MaCT_BCDS
+      MaBaoCaoDoanhSo: $MaBaoCaoDoanhSo
+      MaDaiLy: $MaDaiLy
+      SoPhieuXuat: $SoPhieuXuat
+      TongTriGia: $TongTriGia
+      Tyle: $Tyle
+    ) {
       MaCT_BCDS
       MaBaoCaoDoanhSo
       MaDaiLy
@@ -325,14 +464,14 @@ const updateCt_bcdsMutation = gql`
 `
 
 const calculateTyle = gql`
-mutation CalculateTyLe($maBaoCaoDoanhSo: ID!) {
-  calculateTyLe(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo)
-}
+  mutation CalculateTyLe($maBaoCaoDoanhSo: ID!) {
+    calculateTyLe(MaBaoCaoDoanhSo: $maBaoCaoDoanhSo)
+  }
 `
 
 const deleteCt_bcdsMutation = gql`
-  mutation($MaCT_BCDS: ID!){
-    deleteCt_bcds(MaCT_BCDS: $MaCT_BCDS){
+  mutation ($MaCT_BCDS: ID!) {
+    deleteCt_bcds(MaCT_BCDS: $MaCT_BCDS) {
       MaCT_BCDS
       MaBaoCaoDoanhSo
       MaDaiLy
@@ -344,19 +483,33 @@ const deleteCt_bcdsMutation = gql`
 `
 
 const addPhieuthutienMutation = gql`
-mutation Mutation($maDaiLy: ID!, $soTienThu: Float!, $ngayThuTien: String) {
-  addPhieuthutien(MaDaiLy: $maDaiLy, SoTienThu: $soTienThu, NgayThuTien: $ngayThuTien) {
-    MaDaiLy
-    MaPhieuThuTien
-    NgayThuTien
-    SoTienThu
+  mutation Mutation($maDaiLy: ID!, $soTienThu: Float!, $ngayThuTien: String) {
+    addPhieuthutien(
+      MaDaiLy: $maDaiLy
+      SoTienThu: $soTienThu
+      NgayThuTien: $ngayThuTien
+    ) {
+      MaDaiLy
+      MaPhieuThuTien
+      NgayThuTien
+      SoTienThu
+    }
   }
-}
 `
 
 const updatePhieuthutienMutation = gql`
-  mutation($MaPhieuThuTien: ID!, $MaDaiLy: ID!, $NgayThuTien: String!, $SoTienThu: Int!) {
-    updatePhieuthutien(MaPhieuThuTien: $MaPhieuThuTien, MaDaiLy: $MaDaiLy, NgayThuTien: $NgayThuTien, SoTienThu: $SoTienThu) {
+  mutation (
+    $MaPhieuThuTien: ID!
+    $MaDaiLy: ID!
+    $NgayThuTien: String!
+    $SoTienThu: Int!
+  ) {
+    updatePhieuthutien(
+      MaPhieuThuTien: $MaPhieuThuTien
+      MaDaiLy: $MaDaiLy
+      NgayThuTien: $NgayThuTien
+      SoTienThu: $SoTienThu
+    ) {
       MaPhieuThuTien
       MaDaiLy
       NgayThuTien
@@ -366,8 +519,8 @@ const updatePhieuthutienMutation = gql`
 `
 
 const deletePhieuthutienMutation = gql`
-  mutation($MaPhieuThuTien: ID!){
-    deletePhieuthutien(MaPhieuThuTien: $MaPhieuThuTien){
+  mutation ($MaPhieuThuTien: ID!) {
+    deletePhieuthutien(MaPhieuThuTien: $MaPhieuThuTien) {
       MaPhieuThuTien
       MaDaiLy
       NgayThuTien
@@ -377,7 +530,7 @@ const deletePhieuthutienMutation = gql`
 `
 
 const addBaocaocongnoMutation = gql`
-  mutation($Thang: String!) {
+  mutation ($Thang: String!) {
     addBaocaocongno(Thang: $Thang) {
       MaBaoCaoCongNo
       Thang
@@ -386,7 +539,7 @@ const addBaocaocongnoMutation = gql`
 `
 
 const updateBaocaocongnoMutation = gql`
-  mutation($MaBaoCaoCongNo: ID!, $Thang: String!) {
+  mutation ($MaBaoCaoCongNo: ID!, $Thang: String!) {
     updateBaocaocongno(MaBaoCaoCongNo: $MaBaoCaoCongNo, Thang: $Thang) {
       MaBaoCaoCongNo
       Thang
@@ -395,8 +548,8 @@ const updateBaocaocongnoMutation = gql`
 `
 
 const deleteBaocaocongnoMutation = gql`
-  mutation($MaBaoCaoCongNo: ID!){
-    deleteBaocaocongno(MaBaoCaoCongNo: $MaBaoCaoCongNo){
+  mutation ($MaBaoCaoCongNo: ID!) {
+    deleteBaocaocongno(MaBaoCaoCongNo: $MaBaoCaoCongNo) {
       MaBaoCaoCongNo
       Thang
     }
@@ -404,8 +557,20 @@ const deleteBaocaocongnoMutation = gql`
 `
 
 const addCt_bccnMutation = gql`
-  mutation($MaBaoCaoCongNo: ID!, $MaDaiLy: ID!, $NoDau: Int!, $PhatSinh: Int!, $NoCuoi: Int!) {
-    addCt_bccn(MaBaoCaoCongNo: $MaBaoCaoCongNo, MaDaiLy: $MaDaiLy, NoDau: $NoDau, PhatSinh: $PhatSinh, NoCuoi: $NoCuoi) {
+  mutation (
+    $MaBaoCaoCongNo: ID!
+    $MaDaiLy: ID!
+    $NoDau: Int!
+    $PhatSinh: Int!
+    $NoCuoi: Int!
+  ) {
+    addCt_bccn(
+      MaBaoCaoCongNo: $MaBaoCaoCongNo
+      MaDaiLy: $MaDaiLy
+      NoDau: $NoDau
+      PhatSinh: $PhatSinh
+      NoCuoi: $NoCuoi
+    ) {
       MaCT_BCCN
       MaBaoCaoCongNo
       MaDaiLy
@@ -417,8 +582,22 @@ const addCt_bccnMutation = gql`
 `
 
 const updateCt_bccnMutation = gql`
-  mutation($MaCT_BCCN: ID!, $MaBaoCaoCongNo: ID!, $MaDaiLy: ID!, $NoDau: Int!, $PhatSinh: Int!, $NoCuoi: Int!) {
-    updateCt_bccn(MaCT_BCCN: $MaCT_BCCN, MaBaoCaoCongNo: $MaBaoCaoCongNo, MaDaiLy: $MaDaiLy, NoDau: $NoDau, PhatSinh: $PhatSinh, NoCuoi: $NoCuoi) {
+  mutation (
+    $MaCT_BCCN: ID!
+    $MaBaoCaoCongNo: ID!
+    $MaDaiLy: ID!
+    $NoDau: Int!
+    $PhatSinh: Int!
+    $NoCuoi: Int!
+  ) {
+    updateCt_bccn(
+      MaCT_BCCN: $MaCT_BCCN
+      MaBaoCaoCongNo: $MaBaoCaoCongNo
+      MaDaiLy: $MaDaiLy
+      NoDau: $NoDau
+      PhatSinh: $PhatSinh
+      NoCuoi: $NoCuoi
+    ) {
       MaCT_BCCN
       MaBaoCaoCongNo
       MaDaiLy
@@ -430,8 +609,8 @@ const updateCt_bccnMutation = gql`
 `
 
 const deleteCt_bccnMutation = gql`
-  mutation($MaCT_BCCN: ID!){
-    deleteCt_bccn(MaCT_BCCN: $MaCT_BCCN){
+  mutation ($MaCT_BCCN: ID!) {
+    deleteCt_bccn(MaCT_BCCN: $MaCT_BCCN) {
       MaCT_BCCN
       MaBaoCaoCongNo
       MaDaiLy
@@ -484,4 +663,4 @@ export {
   updateCt_bccnMutation,
   deleteCt_bccnMutation,
   updateThamsoMutation
-};
+}
