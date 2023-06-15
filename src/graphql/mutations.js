@@ -188,7 +188,7 @@ const addMathangMutation = gql`
 `
 
 const updateMathangMutation = gql`
-  mutation($MaMatHang: ID!, $TenMatHang: String!, $SoLuongTon: Int!, $DonGiaNhap: Int!, $MaDVT: ID!) {
+  mutation($MaMatHang: ID!, $TenMatHang: String!, $SoLuongTon: Int!, $DonGiaNhap: Float!, $MaDVT: ID!) {
     updateMathang(MaMatHang: $MaMatHang, TenMatHang: $TenMatHang, SoLuongTon: $SoLuongTon, DonGiaNhap: $DonGiaNhap, MaDVT: $MaDVT) {
       MaMatHang
       TenMatHang
