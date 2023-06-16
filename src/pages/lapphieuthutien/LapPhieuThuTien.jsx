@@ -61,6 +61,8 @@ function LapPhieuThuTien() {
   };
 
   const handleSubmit = (e) => {
+    setShowError(null);
+    setShowSuccess(null)
     e.preventDefault();
     let choosen = daiLy[parseInt(daiLyDuocChon.split(" ")[1])];
     let date = document.querySelector("#date-input").value;
