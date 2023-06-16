@@ -11,7 +11,7 @@ import {
   addBaocaocongnoMutation,
   addCt_bccnMutation,
 } from "../../graphql/mutations";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function BaoCaoCongNo() {
   const [date, setDate] = useState("");
@@ -19,12 +19,12 @@ function BaoCaoCongNo() {
   const [showError, setShowError] = useState(null);
 
   const { loading, error, data } = useQuery(queryEveryDaily);
-  const [queryEvCT_BCCNFunc, bcdsThang] = useLazyQuery(
+  const [queryEvCT_BCCNFunc, { loading: evBCCNByMaBCCNLoading }] = useLazyQuery(
     queryEveryCT_BCCNByMaBCCN
   );
-  const [queryEvBCCNFunc] = useLazyQuery(queryEveryBaocaocongno);
-  const [addBCCNFunc] = useMutation(addBaocaocongnoMutation);
-  const [addCT_BCCNFunc] = useMutation(addCt_bccnMutation);
+  const [queryEvBCCNFunc, { loading: evBCCNLoading }] = useLazyQuery(queryEveryBaocaocongno);
+  const [addBCCNFunc, { loading: addBCCNLoading }] = useMutation(addBaocaocongnoMutation);
+  const [addCT_BCCNFunc, { loading: addCT_BCCNLoading }] = useMutation(addCt_bccnMutation);
 
   if (loading) return <div>Loading...</div>;
   if (error) setShowError(error);
@@ -43,8 +43,8 @@ function BaoCaoCongNo() {
       });
 
       const listCT_BCCN = res.data?.everyCT_BCCNByMaBCCN;
-      
-      if(res.data) setTableData(listCT_BCCN);
+
+      if (res.data) setTableData(listCT_BCCN);
       else throw Error("Lỗi khi tính công nợ.")
 
     } catch (err) {
@@ -106,6 +106,8 @@ function BaoCaoCongNo() {
       getCT_BCCNById(maBCCN);
     }
   };
+
+  const isLoading = evBCCNByMaBCCNLoading || addBCCNLoading || addCT_BCCNLoading || evBCCNLoading;
 
   const CreateRow = ({ rowData }) => {
     return (
@@ -174,8 +176,9 @@ function BaoCaoCongNo() {
           <button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            disabled={isLoading}
           >
-            Gửi
+            {isLoading ? "Đang tạo báo cáo..." : "Tạo báo cáo"}
           </button>
         </form>
       </div>
