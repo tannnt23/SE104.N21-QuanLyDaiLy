@@ -197,9 +197,9 @@ const AddDailyForm = () => {
           type="submit"
           onClick={handleSubmit}
           className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-          disabled={isSubmitDisabled}
+          disabled={isSubmitDisabled || loadingAddDaiLy}
         >
-          {loadingAddDaiLy ? "Loading..." : "Submit"}
+          {loadingAddDaiLy ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

@@ -1,24 +1,71 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { queryEveryDaily } from "../../graphql/queries";
+import Fuse from "fuse.js";
+
 
 import Error from "../../component/pop_up/Error";
 import BackButton from "../../component/button/backbutton/BackButton";
 
 const TraCuuDaiLy = () => {
-    const [searchQuery, setSearchQuery] = useState(""); //search by TenDaiLy
+    const [searchTenDaiLy, setSearchTenDaiLy] = useState(""); //search by TenDaiLy
+    const [searchQuan, setSearchQuan] = useState("");
+    const [searchDienThoai, setSearchDienThoai] = useState("");
+    const [searchDiaChi, setSearchDiaChi] = useState("");
+    const [searchLoaiDaiLy, setSearchLoaiDaiLy] = useState("");
+    const [searchNgayTiepNhan, setSearchNgayTiepNhan] = useState("");
     const [filteredDaily, setFilteredDaily] = useState([]);
     const { loading, error, data } = useQuery(queryEveryDaily);
     const [showError, setShowError] = useState(null);
 
     useEffect(() => {
         if (data) {
-            const filteredData = data.everyDaily.filter((daily) =>
-                daily.TenDaiLy.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            const options = {
+                keys: ['TenDaiLy', 'relatedQuan.TenQuan', 'DienThoai', 'DiaChi', 'relatedLoaidaily.TenLoaiDaiLy'],
+            };
+
+            const fuse = new Fuse(data.everyDaily, options);
+
+            let filteredData = data.everyDaily;
+
+            if (searchTenDaiLy) {
+                const searchResults = fuse.search(searchTenDaiLy);
+                filteredData = searchResults.map((result) => result.item);
+            }
+
+            if (searchQuan) {
+                filteredData = filteredData.filter((daily) =>
+                    daily.relatedQuan.TenQuan.toLowerCase().includes(searchQuan.toLowerCase())
+                );
+            }
+
+            if (searchDienThoai) {
+                filteredData = filteredData.filter((daily) =>
+                    daily.DienThoai.includes(searchDienThoai)
+                );
+            }
+
+            if (searchDiaChi) {
+                filteredData = filteredData.filter((daily) =>
+                    daily.DiaChi.toLowerCase().includes(searchDiaChi.toLowerCase())
+                );
+            }
+
+            if (searchLoaiDaiLy) {
+                filteredData = filteredData.filter((daily) =>
+                    daily.relatedLoaidaily.TenLoaiDaiLy.toLowerCase().includes(searchLoaiDaiLy.toLowerCase())
+                );
+            }
+
+            if (searchNgayTiepNhan) {
+                filteredData = filteredData.filter((daily) =>
+                    daily.NgayTiepNhan.includes(searchNgayTiepNhan)
+                );
+            }
+
             setFilteredDaily(filteredData);
         }
-    }, [data, searchQuery]);
+    }, [data, searchTenDaiLy, searchQuan, searchDienThoai, searchDiaChi, searchLoaiDaiLy, searchNgayTiepNhan]);
 
     if (loading) return <div>Loading...</div>;
     if (error) setShowError(error);
@@ -50,8 +97,46 @@ const TraCuuDaiLy = () => {
                 className="w-96 border border-gray-500 rounded-lg p-2 mb-2"
                 type="text"
                 placeholder="Nhập tên đại lý..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchTenDaiLy}
+                onChange={(e) => setSearchTenDaiLy(e.target.value)}
+            />
+            <input
+                className="w-96 border border-gray-500 rounded-lg p-2 mb-2 mx-2"
+                type="text"
+                placeholder="Nhập tên quận..."
+                value={searchQuan}
+                onChange={(e) => setSearchQuan(e.target.value)}
+            />
+
+            <input
+                className="w-96 border border-gray-500 rounded-lg p-2 mb-2 mx-2"
+                type="text"
+                placeholder="Nhập số điện thoại..."
+                value={searchDienThoai}
+                onChange={(e) => setSearchDienThoai(e.target.value)}
+            />
+
+            <input
+                className="w-96 border border-gray-500 rounded-lg p-2 mb-2 mx-2"
+                type="text"
+                placeholder="Nhập địa chỉ..."
+                value={searchDiaChi}
+                onChange={(e) => setSearchDiaChi(e.target.value)}
+            />
+
+            <input
+                className="w-96 border border-gray-500 rounded-lg p-2 mb-2 mx-2"
+                type="text"
+                placeholder="Nhập loại đại lý..."
+                value={searchLoaiDaiLy}
+                onChange={(e) => setSearchLoaiDaiLy(e.target.value)}
+            />
+            <input
+                className="w-96 border border-gray-500 rounded-lg p-2 mb-2 mr-2"
+                type="text"
+                placeholder="Nhập ngày tiếp nhận..."
+                value={searchNgayTiepNhan}
+                onChange={(e) => setSearchNgayTiepNhan(e.target.value)}
             />
             <table className="w-2/3 border-collapse border border-black">
                 <thead className="bg-gray-100">

@@ -9,7 +9,7 @@ import BackButton from "../../component/button/backbutton/BackButton";
 
 function PhieuNhapHang() {
   const { loading, error, data } = useQuery(queryEveryMathang);
-  const [addPhieunhaphang] = useMutation(addPhieunhaphangMutation);
+  const [addPhieunhaphang, { loading: addPhieuNhapHangLoading, error: addPhieuNhapHangError }] = useMutation(addPhieunhaphangMutation);
 
   const [showError, setShowError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(null);
@@ -27,7 +27,7 @@ function PhieuNhapHang() {
   }, [data]);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return setShowError(error);
+  if (error || addPhieuNhapHangError) return setShowError(addPhieuNhapHangError || error);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -39,10 +39,12 @@ function PhieuNhapHang() {
     const soLuong = parseInt(form.SoLuong.value);
 
     try {
+      if (!soLuong) throw new Error('Bạn phải nhập số lượng.')
+      if (soLuong < 0) throw new Error('Số lượng bạn nhập vào phải lớn hơn 0.')
       await addPhieunhaphang({
         variables: { MaMatHang: maMatHang, SoLuong: soLuong },
-        refetchQueries : () => [{
-          query : queryEveryMathang
+        refetchQueries: () => [{
+          query: queryEveryMathang
         }]
       });
 
@@ -94,8 +96,9 @@ function PhieuNhapHang() {
         <button
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          disabled={addPhieuNhapHangLoading}
         >
-          Submit
+          {addPhieuNhapHangLoading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
