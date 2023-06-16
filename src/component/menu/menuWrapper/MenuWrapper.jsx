@@ -56,7 +56,7 @@ function MenuWrapper() {
     },
     {
       id: 8,
-      label: "Thay đổi quy định",
+      label: "Chỉnh sửa thông tin",
       icon: <DisplaySettingsIcon fontSize="large" />,
       link: 'thay-doi-quy-dinh'
     },

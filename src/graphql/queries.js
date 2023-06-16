@@ -26,6 +26,12 @@ const queryEveryDaily = gql`
       Email
       MaQuan
       MaLoaiDaiLy
+      relatedLoaidaily {
+        TenLoaiDaiLy
+      }
+      relatedQuan {
+        TenQuan
+      }
     }
   }
 `
@@ -368,6 +374,22 @@ query EveryCT_BCDSByMaBCDS($maBaoCaoDoanhSo: ID!) {
   }
 }
 `
+const queryEveryCT_BCCNByMaBCCN = gql`
+query Query($maBaoCaoCongNo: ID!) {
+  everyCT_BCCNByMaBCCN(MaBaoCaoCongNo: $maBaoCaoCongNo) {
+    MaCT_BCCN
+    MaBaoCaoCongNo
+    MaDaiLy
+    relatedDaily {
+      TenDaiLy
+    }
+    NoDau
+    PhatSinh
+    NoCuoi
+  }
+}
+`
+
 
 
 
@@ -380,5 +402,5 @@ export {
   queryEveryBaocaodoanhso, queryBaocaodoanhsoById, queryEveryCt_bcds,
   queryCt_bcdsById, queryEveryPhieuthutien, queryPhieuthutienById, queryEveryBaocaocongno,
   queryBaocaocongnoById, queryEveryCt_bccn, queryCt_bccnById, queryThamSo, queryMatHangByIdArr,
-  queryCt_bccnByTenDLAndThang, queryCt_bcdsByTenDLAndThang, queryEveryCT_BCDSByMaBCDS
+  queryCt_bccnByTenDLAndThang, queryCt_bcdsByTenDLAndThang, queryEveryCT_BCDSByMaBCDS, queryEveryCT_BCCNByMaBCCN
 };

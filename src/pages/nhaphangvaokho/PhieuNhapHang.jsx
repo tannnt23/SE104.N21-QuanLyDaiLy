@@ -1,79 +1,107 @@
-import { useQuery, useMutation } from '@apollo/client';
-import { queryEveryMathang } from '../../graphql/queries';
-import { addPhieunhaphangMutation } from '../../graphql/mutations';
+import { useQuery, useMutation } from "@apollo/client";
+import { queryEveryMathang } from "../../graphql/queries";
+import { addPhieunhaphangMutation } from "../../graphql/mutations";
+import React, { useState, useEffect } from "react";
+
+import Error from "../../component/pop_up/Error";
+import Success from "../../component/pop_up/Success";
+import BackButton from "../../component/button/backbutton/BackButton";
 
 function PhieuNhapHang() {
   const { loading, error, data } = useQuery(queryEveryMathang);
-  const [addPhieunhaphang] = useMutation(addPhieunhaphangMutation);
+  const [addPhieunhaphang, { loading: addPhieuNhapHangLoading, error: addPhieuNhapHangError }] = useMutation(addPhieunhaphangMutation);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const [showError, setShowError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(null);
+  const [options, setOptions] = useState(null);
 
-  if (error) {
-    return <p>Error: {error.message}</p>;
-  }
+  useEffect(() => {
+    if (data)
+      setOptions(
+        data.everyMathang.map((item) => ({
+          value: item.MaMatHang,
+          TenMatHang: item.TenMatHang,
+          SoLuongTon: item.SoLuongTon,
+        }))
+      );
+  }, [data]);
 
-  const options = data.everyMathang.map((item) => ({
-    value: item.MaMatHang,
-    label: `${item.TenMatHang} (Còn lại: ${item.SoLuongTon})`,
-  }));
+  if (loading) return <p>Loading...</p>;
+  if (error || addPhieuNhapHangError) return setShowError(addPhieuNhapHangError || error);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowSuccess(null);
+    setShowError(null);
 
     const form = event.target;
     const maMatHang = form.MaMatHang.value;
     const soLuong = parseInt(form.SoLuong.value);
 
     try {
-      const { data } = await addPhieunhaphang({
+      if (!soLuong) throw new Error('Bạn phải nhập số lượng.')
+      if (soLuong < 0) throw new Error('Số lượng bạn nhập vào phải lớn hơn 0.')
+      await addPhieunhaphang({
         variables: { MaMatHang: maMatHang, SoLuong: soLuong },
+        refetchQueries: () => [{
+          query: queryEveryMathang
+        }]
       });
 
-      console.log('Mutation response:', data);
+      setShowSuccess(true);
     } catch (error) {
-      console.error('Mutation error:', error);
+      setShowError(error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-1/3">
-      <h1 className="font-bold text-4xl mb-4">Lập phiếu nhập hàng</h1>
-      <div className="mb-4">
-        <label htmlFor="MaMatHang" className="block">
-          Tên mặt hàng:
-        </label>
-        <select
-          name="MaMatHang"
-          id="MaMatHang"
-          className="w-full border border-gray-300 rounded px-2 py-1"
+    <div>
+      {showError && <Error error={showError} />}
+      {showSuccess && <Success show={showSuccess} />}
+      <div className="flex justify-center items-center mb-5">
+        <BackButton className="mr-4" />
+        <h2 className="ml-10 text-4xl font-bold text-left w-full">
+          Lập phiếu nhập hàng
+        </h2>
+      </div>
+      <form onSubmit={handleSubmit} className="w-1/3">
+        <div className="mb-4">
+          <label htmlFor="MaMatHang" className="block">
+            Tên mặt hàng:
+          </label>
+          <select
+            name="MaMatHang"
+            id="MaMatHang"
+            className="w-full border border-gray-300 rounded px-2 py-1"
+          >
+            {options &&
+              options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {`${option.TenMatHang} (Còn lại: ${option.SoLuongTon})`}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="SoLuong" className="block">
+            Số lượng:
+          </label>
+          <input
+            type="number"
+            name="SoLuong"
+            id="SoLuong"
+            className="w-full border border-gray-300 rounded px-2 py-1"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          disabled={addPhieuNhapHangLoading}
         >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label htmlFor="SoLuong" className="block">
-          Số lượng:
-        </label>
-        <input
-          type="number"
-          name="SoLuong"
-          id="SoLuong"
-          className="w-full border border-gray-300 rounded px-2 py-1"
-        />
-      </div>
-      <button
-        type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Submit
-      </button>
-    </form>
+          {addPhieuNhapHangLoading ? "Submitting..." : "Submit"}
+        </button>
+      </form>
+    </div>
   );
 }
 

@@ -146,7 +146,7 @@ function ThayDoiMatHang() {
       {/* Heading */}
       <div className="flex justify-center items-center mb-5">
         <BackButton className="mr-4" />
-        <h2 className="mb-4 text-4xl font-bold text-center w-full">
+        <h2 className="ml-10 text-4xl font-bold text-left w-full">
           Danh sách mặt hàng
         </h2>
       </div>

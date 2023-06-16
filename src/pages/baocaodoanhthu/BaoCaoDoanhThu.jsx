@@ -45,7 +45,10 @@ function BaoCaoDoanhThu() {
       });
 
       const listCT_BCDS = res.data?.everyCT_BCDSByMaBCDS;
-      setTableData(listCT_BCDS);
+      
+      if(res.data) setTableData(listCT_BCDS);
+      else throw Error("Lỗi khi tính công nợ.")
+
     } catch (err) {
       setShowError(err);
     }
@@ -169,9 +172,9 @@ function BaoCaoDoanhThu() {
     <div>
       {showError && <Error error={showError} />}
       {/* Heading */}
-      <div className="flex justify-center items-center">
+      <div className="mb-10 flex justify-center items-center">
         <BackButton className="mr-4" />
-        <h2 className="mb-4 text-4xl font-bold text-center w-full">
+        <h2 className="ml-10 text-4xl font-bold text-left w-full">
           Báo cáo doanh thu
         </h2>
       </div>
