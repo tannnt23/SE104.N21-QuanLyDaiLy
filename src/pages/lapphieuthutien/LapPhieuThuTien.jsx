@@ -89,7 +89,7 @@ function LapPhieuThuTien() {
           TienNo: parseFloat(choosen.TienNo - thuTien),
         },
       })
-        .then(() => {
+        .then((data) => {
           setDaiLy((prev) =>
             prev.map((daily) =>
               daily.MaDaiLy == choosen.MaDaiLy
@@ -100,8 +100,7 @@ function LapPhieuThuTien() {
                 : daily
             )
           );
-
-          setShowSuccess(true);
+          if (data.data.updateDaily) setShowSuccess(true);
         })
         .catch((err) => {
           setShowError(err);
