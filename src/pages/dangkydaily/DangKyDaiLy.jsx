@@ -9,20 +9,21 @@ import BackButton from "../../component/button/backbutton/BackButton";
 
 const AddDailyForm = () => {
   // Define the mutation
-  const [addDaily] = useMutation(addDailyMutation);
+  const [addDaily, { loading: loadingAddDaiLy, error: errorAddDaiLy }] = useMutation(addDailyMutation);
 
-  const [showError, setShowError] = useState(null);
-  const [showSuccess, setShowSuccess] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [selectedLoaiDaiLy, setSelectedLoaiDaiLy] = useState("");
   const [selectedQuan, setSelectedQuan] = useState("");
   const [tenDaiLy, setTenDaiLy] = useState("");
   const [dienThoai, setDienThoai] = useState("");
   const [diaChi, setDiaChi] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
-  const { 
-    loading: loadingQuan, 
-    error: errorQuan, 
-    data: dataQuan 
+  const {
+    loading: loadingQuan,
+    error: errorQuan,
+    data: dataQuan
   } = useQuery(queryEveryQuan);
   const {
     loading: loadingLoaiDaiLy,
@@ -35,8 +36,9 @@ const AddDailyForm = () => {
   }, [selectedLoaiDaiLy]);
 
   if (loadingQuan) return <div>Loading...</div>;
-  if (errorLoaiDaiLy) setShowError({message : "Error fetching data"})
-  if (errorQuan) setShowError({message : "Error fetching data"})
+  if (errorLoaiDaiLy) setShowError({ message: `${errorLoaiDaiLy.message}` });
+  if (errorQuan) setShowError({ message: `${errorQuan.message}` })
+  if (errorAddDaiLy) setShowError({ message: `${errorAddDaiLy.message}` })
 
   const handleLoaiDaiLySelectionChange = (event) => {
     setSelectedLoaiDaiLy(event.target.value);
@@ -48,7 +50,14 @@ const AddDailyForm = () => {
     setTenDaiLy(event.target.value);
   };
   const handleDienThoai = (event) => {
-    setDienThoai(event.target.value);
+    // Validate the phone number format
+    const phoneNumberPattern = /^\d+$/;
+    if (!phoneNumberPattern.test(event.target.value) && event.target.value !== "") {
+      setPhoneNumberError("Số điện thoại không hợp lệ");
+    } else {
+      setDienThoai(event.target.value);
+      setPhoneNumberError("");
+    }
   };
   const handleDiaChi = (event) => {
     setDiaChi(event.target.value);
@@ -80,11 +89,13 @@ const AddDailyForm = () => {
       setDiaChi("")
       setDienThoai("")
       setTenDaiLy("")
-      
+
     } catch (error) {
       setShowError(error);
     }
   };
+
+  const isSubmitDisabled = phoneNumberError || dienThoai === "" || diaChi === "" || tenDaiLy === "" || selectedLoaiDaiLy === "" || selectedQuan === "";
 
   return (
     <div>
@@ -124,6 +135,9 @@ const AddDailyForm = () => {
             className="w-full p-2 border border-gray-600 rounded-md"
             placeholder="Nhập số điện thoại..."
           />
+          {phoneNumberError && (
+            <p className="text-red-500">{phoneNumberError}</p>
+          )}
         </div>
         <div>
           <label htmlFor="DiaChi" className="block font-medium">
@@ -183,8 +197,9 @@ const AddDailyForm = () => {
           type="submit"
           onClick={handleSubmit}
           className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+          disabled={isSubmitDisabled}
         >
-          Submit
+          {loadingAddDaiLy ? "Loading..." : "Submit"}
         </button>
       </form>
     </div>
