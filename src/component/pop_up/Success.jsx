@@ -6,7 +6,6 @@ const Success = (prop) => {
   useEffect(() => {
     setShowError(prop.show);
   }, [prop]);
-
   const handleCloseError = () => {
     setShowError(false);
   };

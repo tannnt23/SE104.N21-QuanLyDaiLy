@@ -3,11 +3,23 @@ import { useQuery, useMutation } from '@apollo/client';
 import { queryEveryMathang, queryMatHangByIdArr, queryThamSo } from '../../graphql/queries';
 import { addPhieuxuathangMutation, addCt_phieuxuathangMutation, updateTienNo } from '../../graphql/mutations';
 import Error from "../../component/pop_up/Error";
+import Success from "../../component/pop_up/Success";
 
 const Table = ({ daily }) => {
-  const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
+  const [addPhieuxuathang, { loading: loadingAddPhieuxuathang, error: errorAddPhieuxuathang }] = useMutation(addPhieuxuathangMutation);
   const [addCt_phieuxuathang] = useMutation(addCt_phieuxuathangMutation);
   const [accumulateTienNoMutation] = useMutation(updateTienNo);
+
+  const [rows, setRows] = useState([]);
+  const [field1Values, setField1Values] = useState(['1']);
+  const [currentMatHangMap, setCurrentMatHangMap] = useState({});
+  const [donGiaXuatMap, setDonGiaXuatMap] = useState({});
+  const [field3Values, setField3Values] = useState([]);
+  const [thanhTienValues, setThanhTienValues] = useState([]);
+  const [totalThanhTien, setTotalThanhTien] = useState(0); // State variable for the sum
+  const [amountPaid, setAmountPaid] = useState(0); // State variable for the amount paid by the buyer
+  const [showError, setShowError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(null);
 
   // Define the query for fetching 'thamso' data
   const { loading: loadingThamSo, error: errorThamSo, data: dataThamSo } = useQuery(queryThamSo);
@@ -56,16 +68,22 @@ const Table = ({ daily }) => {
           tienNo: amountOwed,
         },
       });
+      setShowSuccess(true);
     } catch (error) {
       console.log(error);
+      setShowError(error)
     }
   };
+
 
   const { loading: loadingMatHang, error: errorMatHang, data: dataMatHang } = useQuery(queryEveryMathang);
   let allMatHang = [];
   if (dataMatHang && dataMatHang.everyMathang) {
     allMatHang = dataMatHang.everyMathang;
   }
+
+  // const isLoading = loadingThamSo || loadingMatHang || loadingMatHangByID;
+
 
   useEffect(() => {
     addRow();
@@ -181,6 +199,8 @@ const Table = ({ daily }) => {
 
   return (
     <div>
+      {showError && <Error error={showError} />}
+      {showSuccess && <Success show={showSuccess} />}
       <table className="table-auto border-collapse border">
         <thead>
           <tr>
@@ -263,7 +283,11 @@ const Table = ({ daily }) => {
         </tfoot>
       </table>
       <button onClick={addRow} className='block bg-green-600 text-white font-bold p-2 mt-2 '>Add Row</button>
-      <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2 mt-2'>Submit</button>
+      <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2 mt-2'>
+        {
+          loadingAddPhieuxuathang? "Submitting" : "Submit"
+        }
+      </button>
 
     </div>
   );
