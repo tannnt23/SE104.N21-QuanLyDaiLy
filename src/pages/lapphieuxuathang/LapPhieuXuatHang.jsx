@@ -1,13 +1,20 @@
 // import PhieuXuatHang from "../../component/PhieuXuatHang/PhieuXuatHang"
-import PhieuXuatHang from "../../component/PhieuXuatHang/PhieuXuatHang"
+import PhieuXuatHang from "../../component/PhieuXuatHang/PhieuXuatHang";
+import BackButton from "../../component/button/backbutton/BackButton";
 
 function LapPhieuXuatHang() {
   return (
     <div>
-        <h1 className='font-bold text-4xl mb-4'>Lập phiếu xuất hàng</h1>
-        <PhieuXuatHang/>
+      {/* Heading */}
+      <div className="flex justify-center items-center mb-5">
+        <BackButton className="mr-4" />
+        <h2 className="ml-10 text-4xl font-bold text-left w-full">
+          Lập phiếu xuất hàng
+        </h2>
+      </div>
+      <PhieuXuatHang />
     </div>
-  )
+  );
 }
 
-export default LapPhieuXuatHang
+export default LapPhieuXuatHang;
