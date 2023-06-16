@@ -238,12 +238,16 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { queryEveryMathang, queryMatHangByIdArr, queryThamSo } from '../../graphql/queries';
 import { addPhieuxuathangMutation, addCt_phieuxuathangMutation, updateTienNo } from '../../graphql/mutations';
-
+import Error from "../../component/pop_up/Error";
 
 const Table = ({ daily }) => {
   const [addPhieuxuathang] = useMutation(addPhieuxuathangMutation);
   const [addCt_phieuxuathang] = useMutation(addCt_phieuxuathangMutation);
   const [accumulateTienNoMutation] = useMutation(updateTienNo);
+
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   // Define the query for fetching 'thamso' data
   const { loading: loadingThamSo, error: errorThamSo, data: dataThamSo } = useQuery(queryThamSo);
@@ -261,7 +265,7 @@ const Table = ({ daily }) => {
           MaDaiLy: daily, // Replace with the actual ID of the DaiLy
         },
       });
-      
+
       const maPhieuXuat = data.addPhieuxuathang.MaPhieuXuat;
 
       // Perform the addCt_phieuxuathang mutation for each row
@@ -271,7 +275,6 @@ const Table = ({ daily }) => {
         const soLuongXuat = parseInt(row.field3);
         const donGiaXuat = parseFloat(donGiaXuatMap[maMatHang]);
         const thanhTien = parseFloat(thanhTienValues[i]);
-        console.log("so lg xuat:", soLuongXuat)
 
         // Perform the addCt_phieuxuathang mutation for each row
         const { data } = await addCt_phieuxuathang({
@@ -293,7 +296,6 @@ const Table = ({ daily }) => {
           tienNo: amountOwed,
         },
       });
-      console.log(accumulateTienNo);
     } catch (error) {
       console.log(error);
     }
@@ -512,6 +514,7 @@ const Table = ({ daily }) => {
       </table>
       <button onClick={addRow} className='block bg-green-600 text-white font-bold p-2 mt-2 '>Add Row</button>
       <button onClick={handleSubmit} className='block bg-blue-700 text-white font-bold p-2 mt-2'>Submit</button>
+
     </div>
   );
 };
