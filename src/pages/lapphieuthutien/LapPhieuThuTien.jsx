@@ -11,7 +11,7 @@ import {
 import { useState, useEffect } from "react";
 
 function LapPhieuThuTien() {
-  const { loading, error, data, refetch} = useQuery(queryEveryDaily);
+  const { loading, error, data, refetch } = useQuery(queryEveryDaily);
   const [updateFunc] = useMutation(updateDailyMutation);
   const [addFunc] = useMutation(addPhieuthutienMutation);
   const [queryFunc, thamso] = useLazyQuery(queryThamSo);
@@ -28,13 +28,13 @@ function LapPhieuThuTien() {
     if (data) setDaiLy([...data.everyDaily]);
   }, [data]);
 
-  useEffect(()=>{
-    if (!isNeedToFetch){ 
-        thamso.refetch();
-        refetch();
-        setIsNeedToFetch(true)
+  useEffect(() => {
+    if (!isNeedToFetch) {
+      thamso.refetch();
+      refetch();
+      setIsNeedToFetch(true);
     }
-  },[])
+  }, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return setShowError(error);
@@ -62,50 +62,51 @@ function LapPhieuThuTien() {
 
   const handleSubmit = (e) => {
     setShowError(null);
-    setShowSuccess(null)
+    setShowSuccess(null);
     e.preventDefault();
     let choosen = daiLy[parseInt(daiLyDuocChon.split(" ")[1])];
     let date = document.querySelector("#date-input").value;
 
     if (
       thuTien > choosen.TienNo &&
-      !thamso.data.thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo
-    )
+      thamso.data.thamso.SoTienThuKhongVuotQuaSoTienDaiLyDangNo
+    ) {
       setShowError({ message: "Tiền thu phải nhỏ hơn số tiền đại lý nợ" });
-    else {
-      addFunc({
-        variables: {
-          ngayThuTien: date,
-          maDaiLy: choosen.MaDaiLy,
-          soTienThu: parseFloat(thuTien),
-        },
-      }).catch((err) => {
+      return;
+    }
+
+    addFunc({
+      variables: {
+        ngayThuTien: date,
+        maDaiLy: choosen.MaDaiLy,
+        soTienThu: parseFloat(thuTien),
+      },
+    }).catch((err) => {
+      setShowError(err);
+    });
+
+    updateFunc({
+      variables: {
+        ...choosen,
+        TienNo: parseFloat(choosen.TienNo - thuTien),
+      },
+    })
+      .then((data) => {
+        setDaiLy((prev) =>
+          prev.map((daily) =>
+            daily.MaDaiLy == choosen.MaDaiLy
+              ? {
+                  ...daily,
+                  TienNo: parseFloat(choosen.TienNo - thuTien),
+                }
+              : daily
+          )
+        );
+        if (data.data.updateDaily) setShowSuccess(true);
+      })
+      .catch((err) => {
         setShowError(err);
       });
-
-      updateFunc({
-        variables: {
-          ...choosen,
-          TienNo: parseFloat(choosen.TienNo - thuTien),
-        },
-      })
-        .then((data) => {
-          setDaiLy((prev) =>
-            prev.map((daily) =>
-              daily.MaDaiLy == choosen.MaDaiLy
-                ? {
-                    ...daily,
-                    TienNo: parseFloat(choosen.TienNo - thuTien),
-                  }
-                : daily
-            )
-          );
-          if (data.data.updateDaily) setShowSuccess(true);
-        })
-        .catch((err) => {
-          setShowError(err);
-        });
-    }
   };
 
   return (
