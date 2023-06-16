@@ -47,7 +47,7 @@ function ThayDoiQuyDinh() {
       <div className="flex justify-center items-center mb-10 ">
         <BackButton className="mr-4" />
         <h2 className="text-4xl font-bold text-center w-full">
-          Thay đổi
+          Chỉnh sửa thông tin
         </h2>
       </div>
       {/* Form */}

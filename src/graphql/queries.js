@@ -26,6 +26,12 @@ const queryEveryDaily = gql`
       Email
       MaQuan
       MaLoaiDaiLy
+      relatedLoaidaily {
+        TenLoaiDaiLy
+      }
+      relatedQuan {
+        TenQuan
+      }
     }
   }
 `
