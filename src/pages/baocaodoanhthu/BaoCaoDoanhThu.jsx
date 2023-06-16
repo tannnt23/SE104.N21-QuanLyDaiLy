@@ -12,23 +12,23 @@ import {
   addCt_bcdsMutation,
   calculateTyle,
 } from "../../graphql/mutations";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function BaoCaoDoanhThu() {
   const [date, setDate] = useState("");
   const [tableData, setTableData] = useState(null);
   const [showError, setShowError] = useState(null);
 
-  const { loading, error, data } = useQuery(queryEveryDaily);
-  const [queryEvCT_BCDSFunc, bcdsThang] = useLazyQuery(
+  const { loading: evDaiLyLoading, error, data } = useQuery(queryEveryDaily);
+  const [queryEvCT_BCDSFunc, { loading: evBCDSByMaBCDSLoading }] = useLazyQuery(
     queryEveryCT_BCDSByMaBCDS
   );
-  const [queryEvBCDSFunc] = useLazyQuery(queryEveryBaocaodoanhso);
-  const [addBCDSFunc] = useMutation(addBaocaodoanhsoMutation);
-  const [addCT_BCDSFunc] = useMutation(addCt_bcdsMutation);
-  const [calculate] = useMutation(calculateTyle);
+  const [queryEvBCDSFunc, { loading: evBCDSLoading }] = useLazyQuery(queryEveryBaocaodoanhso);
+  const [addBCDSFunc, { loading: addBCDSByLoading }] = useMutation(addBaocaodoanhsoMutation);
+  const [addCT_BCDSFunc, { loading: addCT_CDSLoading }] = useMutation(addCt_bcdsMutation);
+  const [calculate, { loading: calculateTyLeLoading }] = useMutation(calculateTyle);
 
-  if (loading) return <div>Loading...</div>;
+  if (evDaiLyLoading) return <div>Loading...</div>;
   if (error) setShowError(error);
 
   const handleDateChange = (event) => {
@@ -45,8 +45,8 @@ function BaoCaoDoanhThu() {
       });
 
       const listCT_BCDS = res.data?.everyCT_BCDSByMaBCDS;
-      
-      if(res.data) setTableData(listCT_BCDS);
+
+      if (res.data) setTableData(listCT_BCDS);
       else throw Error("Lỗi khi tính công nợ.")
 
     } catch (err) {
@@ -79,9 +79,11 @@ function BaoCaoDoanhThu() {
         )
       );
 
-      await calculate({variables : {
-        maBaoCaoDoanhSo: maBCDS
-      }});
+      await calculate({
+        variables: {
+          maBaoCaoDoanhSo: maBCDS
+        }
+      });
 
       return maBCDS
     } catch (err) {
@@ -131,42 +133,43 @@ function BaoCaoDoanhThu() {
     data.sort((a, b) => b.TongTriGia - a.TongTriGia)
 
     return (
-    <div className="mt-4 mx-auto">
-      <h2 className="text-center text-xl mb-2">
-        Báo cáo doanh thu tháng {date.split("-")[1]} năm {date.split("-")[0]}
-      </h2>
-      <table className="w-full border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2">Tên đại lý</th>
-            <th className="border border-gray-300 px-4 py-2">Số phiếu xuất</th>
-            <th className="border border-gray-300 px-4 py-2">Tổng trị giá</th>
-            <th className="border border-gray-300 px-4 py-2">Tỷ lệ (%)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data &&
-            data.map((row) => (
-              <CreateRow rowData={row} key={row?.MaCT_BCDS} />
-            ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td
-              className="border border-gray-300 px-4 py-2 font-bold text-right"
-              colSpan="4"
-            >
-              Tổng số doanh thu:{" "}
-              {tableData.reduce(
-                (total, x) => total + parseFloat(x?.["TongTriGia"]),
-                0
-              )}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  )};
+      <div className="mt-4 mx-auto">
+        <h2 className="text-center text-xl mb-2">
+          Báo cáo doanh thu tháng {date.split("-")[1]} năm {date.split("-")[0]}
+        </h2>
+        <table className="w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 px-4 py-2">Tên đại lý</th>
+              <th className="border border-gray-300 px-4 py-2">Số phiếu xuất</th>
+              <th className="border border-gray-300 px-4 py-2">Tổng trị giá</th>
+              <th className="border border-gray-300 px-4 py-2">Tỷ lệ (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data &&
+              data.map((row) => (
+                <CreateRow rowData={row} key={row?.MaCT_BCDS} />
+              ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td
+                className="border border-gray-300 px-4 py-2 font-bold text-right"
+                colSpan="4"
+              >
+                Tổng số doanh thu:{" "}
+                {tableData.reduce(
+                  (total, x) => total + parseFloat(x?.["TongTriGia"]),
+                  0
+                )}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    )
+  };
 
   return (
     <div>
@@ -191,8 +194,9 @@ function BaoCaoDoanhThu() {
           <button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            disabled={isLoading}
           >
-            Gửi
+            {isLoading ? "Đang tạo báo cáo..." : "Tạo báo cáo"}
           </button>
         </form>
       </div>
